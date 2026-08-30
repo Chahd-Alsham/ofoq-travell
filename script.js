@@ -51,11 +51,13 @@ const DEFAULT_DESTINATIONS = [
 ];
 
 const DEFAULT_OFFERS = [
-    { id: 1, title: "باقة دبي الساحرة", destination: "دبي، الإمارات", desc: "تذكرة طيران + إقامة 5 ليالٍ في فندق 5 نجوم مع الإفطار.", price: "اتصل بنا", startDate: "2026-04-01", endDate: "2026-05-01", image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&q=80" },
+    { id: 1, title: "باقة دبي الساحرة", destination: "دبي، الإمارات", desc: "تذكرة طيران + إقامة 5 ليالٍ في فندق 5 نجوم مع الإفطار.", price: "أتصل بنا", startDate: "2026-04-01", endDate: "2026-05-01", image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&q=80" },
     { id: 2, title: "رحلة إسطنبول التاريخية", destination: "إسطنبول، تركيا", desc: "رحلة طيران مباشرة مع جولات سياحية شاملة.", price: "أتصل بنا", startDate: "2026-04-10", endDate: "2026-05-10", image: "https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?auto=format&fit=crop&w=600&q=80" }
 ];
 
-
+const DEFAULT_PROMOS = [
+    { id: 1, title: "عرض الصيف المميز - خصم 15%", desc: "احجز رحلتك القادمة واستمتع بخصم خاص لفترة محدودة.", discount: "15%", price: "تخفيض خاص", startDate: "2026-06-01", endDate: "2026-08-31", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80", isFeatured: true }
+];
 
 const DEFAULT_GALLERY = [
     { id: 1, title: "أسطول الطيران", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=600&q=80" },
