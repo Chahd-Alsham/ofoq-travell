@@ -1,1148 +1,834 @@
-// ==========================================================================
-// OFOQ TRAVEL - FULL SYSTEM CORE LOGIC & ENGINE (PDF EXPORT OPTIMIZED FOR A4)
-// ==========================================================================
+/* ==========================================================
+   OFOQ TRAVEL - COMPLETE PRODUCTION JAVASCRIPT
+   ========================================================== */
 
-let currentBooking = {
-    id: null,
-    tripType: 'one-way',
-    status: 'مؤكد / CONFIRMED',
-    pnr: '',
-    ticketNumber: '',
-    reference: '',
-    bookingDate: new Date().toISOString().split('T')[0],
-    passengers: [],
-    flights: [],
-    price: '',
-    currency: 'DZD',
-    checkedBaggage: '',
-    cabinBaggage: '',
-    notes: ''
+// --- 1. CONFIGURATION & DEFAULT DATA ---
+const DEFAULT_SETTINGS = {
+    companyName: "أفق للطيران – Ofoq Travel",
+    phone: "+213 564 694 878",
+    whatsapp: "+213564694878",
+    email: "travelofoq@gmail.com",
+    address: "الجزائر العاصمة، الجزائر",
+    footerText: "أفق للطيران – Ofoq Travel. جميع الحقوق محفوظة."
 };
 
-let appSettings = {
-    companyNameAr: 'أفق للطيران',
-    companyNameEn: 'OFOQ TRAVEL',
-    phone: '+213 550 00 00 00',
-    email: 'contact@ofoqtravel.com',
-    address: 'الجزائر / الرياض',
-    whatsapp: '+213 550 00 00 00',
-    website: 'www.ofoqtravel.com',
-    footerText: 'شكرًا لاختياركم أفق للطيران، نتمنى لكم رحلة سعيدة وآمنة. Thank you for choosing Ofoq Travel.',
-    instructions: "⚠ يرجى الحضور إلى المطار قبل الرحلة الدولية بـ 3 ساعات.\n⚠ تأكد من صلاحية جواز السفر لمدة لا تقل عن 6 أشهر.\n⚠ تأكد من التأشيرات والمستندات المطلوبة لدولة الوجهة.\n⚠ تحقق من وزن الأمتعة وTerminal المحدد في التذكرة.",
-    logoBase64: ''
+const DEFAULT_HERO = {
+    title: "اكتشف العالم مع أفق للطيران",
+    desc: "نجعل رحلتك تجربة فاخرة وآمنة إلى أرقى الوجهات العالمية بأسعار تنافسية وخدمة استثنائية.",
+    bgImage: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1920&q=80"
 };
 
-let defaultAirlines = [
-    { code: 'QR', name: 'Qatar Airways', logo: '🇶🇦' },
-    { code: 'TK', name: 'Turkish Airlines', logo: '🇹🇷' },
-    { code: 'PC', name: 'Pegasus Airlines', logo: '🇹🇷' },
-    { code: 'AH', name: 'Air Algérie', logo: '🇩🇿' },
-    { code: 'AT', name: 'Royal Air Maroc', logo: '🇲🇦' },
-    { code: 'MS', name: 'EgyptAir', logo: '🇪🇬' },
-    { code: 'SV', name: 'Saudia', logo: '🇸🇦' },
-    { code: 'EK', name: 'Emirates', logo: '🇦🇪' },
-    { code: 'EY', name: 'Etihad Airways', logo: '🇦🇪' },
-    { code: 'XY', name: 'Flynas', logo: '🇸🇦' },
-    { code: 'F3', name: 'Flyadeal', logo: '🇸🇦' },
-    { code: 'TU', name: 'Tunisair', logo: '🇹🇳' },
-    { code: 'BJ', name: 'Nouvelair', logo: '🇹🇳' },
-    { code: 'AF', name: 'Air France', logo: '🇫🇷' },
-    { code: 'LH', name: 'Lufthansa', logo: '🇩🇪' },
-    { code: 'BA', name: 'British Airways', logo: '🇬🇧' },
-    { code: 'KL', name: 'KLM', logo: '🇳🇱' },
-    { code: 'IB', name: 'Iberia', logo: '🇪🇸' },
-    { code: 'AZ', name: 'ITA Airways', logo: '🇮🇹' },
-    { code: 'FR', name: 'Ryanair', logo: '🇮🇪' },
-    { code: 'W6', name: 'Wizz Air', logo: '🇭🇺' }
+const DEFAULT_ABOUT = {
+    title: "بوابتك الموثوقة للسفر الفاخر والآمن",
+    desc: "شركة أفق للطيران هي شريكك الأمثل لتنظيم الرحلات وحجز تذاكر الطيران والفنادق بأعلى معايير الاحترافية والمرونة. نضع راحة العميل وتفاصيل رحلته في قمة أولوياتنا لضمان تجربة لا تُنسى.",
+    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&q=80"
+};
+
+const DEFAULT_SERVICES = [
+    { id: 1, title: "حجز تذاكر الطيران", desc: "حجز تذاكر الطيران لمختلف الوجهات وشركات الطيران العالمية.", icon: "fa-plane" },
+    { id: 2, title: "تنظيم الرحلات", desc: "تنظيم برامج سفر سياحية مناسبة لاحتياجات العميل.", icon: "fa-route" },
+    { id: 3, title: "السفر العائلي", desc: "حلول سفر مريحة وآمنة للعائلات والمجموعات.", icon: "fa-users" },
+    { id: 4, title: "رحلات الأعمال", desc: "خدمات سفر مخصصة لرجال الأعمال والشركات.", icon: "fa-briefcase" },
+    { id: 5, title: "حجوزات الفنادق", desc: "المساعدة في اختيار وحجز أفضل الفنادق العالمية.", icon: "fa-hotel" },
+    { id: 6, title: "الاستشارات السياحية", desc: "مساعدة العميل في اختيار الوجهة والرحلة المثالية.", icon: "fa-compass" }
 ];
 
-let defaultAirports = [
-    { iata: 'ALG', city: 'Algiers', airport: 'Houari Boumediene Airport', country: 'Algeria' },
-    { iata: 'ORN', city: 'Oran', airport: 'Ahmed Ben Bella Airport', country: 'Algeria' },
-    { iata: 'CZL', city: 'Constantine', airport: 'Mohamed Boudiaf Airport', country: 'Algeria' },
-    { iata: 'IST', city: 'Istanbul', airport: 'Istanbul Airport', country: 'Turkey' },
-    { iata: 'SAW', city: 'Istanbul', airport: 'Sabiha Gökçen Airport', country: 'Turkey' },
-    { iata: 'RUH', city: 'Riyadh', airport: 'King Khalid International Airport', country: 'Saudi Arabia' },
-    { iata: 'JED', city: 'Jeddah', airport: 'King Abdulaziz International Airport', country: 'Saudi Arabia' },
-    { iata: 'MED', city: 'Madinah', airport: 'Prince Mohammad bin Abdulaziz Airport', country: 'Saudi Arabia' },
-    { iata: 'DOH', city: 'Doha', airport: 'Hamad International Airport', country: 'Qatar' },
-    { iata: 'DXB', city: 'Dubai', airport: 'Dubai International Airport', country: 'UAE' },
-    { iata: 'CAI', city: 'Cairo', airport: 'Cairo International Airport', country: 'Egypt' },
-    { iata: 'CMN', city: 'Casablanca', airport: 'Mohammed V International Airport', country: 'Morocco' },
-    { iata: 'TUN', city: 'Tunis', airport: 'Tunis–Carthage International Airport', country: 'Tunisia' },
-    { iata: 'CDG', city: 'Paris', airport: 'Charles de Gaulle Airport', country: 'France' },
-    { iata: 'LHR', city: 'London', airport: 'Heathrow Airport', country: 'UK' }
+const DEFAULT_DESTINATIONS = [
+    { id: 1, country: "المملكة العربية السعودية", city: "مكة المكرمة والمدينة", desc: "رحلات عمرة وحج فاخرة ومريحة.", image: "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=800&q=80" },
+    { id: 2, country: "الإمارات العربية المتحدة", city: "دبي", desc: "استمتع بأسلوب الحياة الفاخر وناطحات السحاب.", image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80" },
+    { id: 3, country: "تركيا", city: "إسطنبول", desc: "تاريخ عريق ومناظر طبيعية خلابة تسر الناظرين.", image: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=800&q=80" },
+    { id: 4, country: "فرنسا", city: "باريس", desc: "عاصمة النور والفن والتسوق العالمي.", image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80" }
 ];
 
-let AIRLINES_DATABASE = [];
-let AIRPORTS_DATABASE = [];
-let newAirlineLogoBase64 = '';
+const DEFAULT_OFFERS = [
+    { id: 1, title: "عرض إسطنبول الساحر", dest: "تركيا - إسطنبول", desc: "تذكرة طيران + إقامة فندقية 5 نجوم لمدة 5 أيام.", price: "85,000 دج", startDate: "2026-06-01", endDate: "2026-06-30", image: "https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?auto=format&fit=crop&w=800&q=80" },
+    { id: 2, title: "رحلة دبي الفاخرة", dest: "الإمارات - دبي", desc: "عروض خاصة للعائلات تشمل الجولات السياحية والطيران.", price: "120,000 دج", startDate: "2026-06-05", endDate: "2026-07-05", image: "https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&w=800&q=80" }
+];
 
-function loadDatabases() {
-    const savedAirlines = localStorage.getItem('ofoq_airlines');
-    const savedAirports = localStorage.getItem('ofoq_airports');
-    AIRLINES_DATABASE = savedAirlines ? JSON.parse(savedAirlines) : [...defaultAirlines];
-    AIRPORTS_DATABASE = savedAirports ? JSON.parse(savedAirports) : [...defaultAirports];
-}
+const DEFAULT_PROMO = {
+    id: 1, title: "عرض الصيف الحصري لعملاء أفق", desc: "احصل على خصم 15% على جميع رحلات العودة نحو الشرق الأوسط وأوروبا عند الحجز هذا الأسبوع.", discount: "15% خصم", active: true, image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80"
+};
+
+const DEFAULT_GALLERY = [
+    { id: 1, title: "أسطول الطيران", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&q=80" },
+    { id: 2, title: "وجهات عالمية", image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80" },
+    { id: 3, title: "خدمات فاخرة", image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80" },
+    { id: 4, title: "استرخاء وسفر", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" }
+];
+
+const DEFAULT_VIDEOS = [
+    { id: 1, title: "تجربة السفر مع أفق", type: "youtube", url: "https://www.youtube.com/embed/ScMzIvxBSi4" }
+];
+
+const DEFAULT_FAQ = [
+    { id: 1, q: "كيف يمكنني تأكيد حجز رحلتي؟", a: "بكل سهولة عبر ملء نموذج الحجز في الموقع وسيتم تحويلك مباشرة لتأكيد الطلب مع خدمة العملاء عبر واتساب." },
+    { id: 2, q: "هل تتوفر خدمات حجز الفنادق مع التذاكر؟", a: "نعم، نقدم باقات متكاملة تشمل الطيران والفنادق والجولات السياحية." }
+];
 
 const TRANSLATIONS = {
+    ar: {
+        nav_home: "الرئيسية", nav_about: "من نحن", nav_services: "خدماتنا", nav_destinations: "وجهاتنا", nav_offers: "عروضنا", nav_gallery: "المعرض", nav_contact: "احجز رحلتك", nav_admin: "الأدمن",
+        hero_title: "اكتشف العالم مع أفق للطيران", hero_desc: "نجعل رحلتك تجربة فاخرة وآمنة إلى أرقى الوجهات العالمية بأسعار تنافسية وخدمة استثنائية.", hero_btn1: "اكتشف خدماتنا", hero_btn2: "اطلب رحلتك",
+        about_tag: "من نحن", about_title: "بوابتك الموثوقة للسفر الفاخر والآمن", about_desc: "شركة أفق للطيران هي شريكك الأمثل لتنظيم الرحلات وحجز تذاكر الطيران والفنادق بأعلى معايير الاحترافية والمرونة.",
+        feat_1: "حجوزات آمنة ومضمونة", feat_2: "دعم عملاء مستمر 24/7", feat_3: "خدمات سياحية فاخرة",
+        serv_tag: "خدماتنا الاحترافية", serv_title: "ما نقدمه لراحة سفرك",
+        dest_tag: "وجهات السفر", dest_title: "استكشف أبرز وجهاتنا العالمية",
+        offer_tag: "عروض السفر", offer_title: "عروضنا الخاصة والمميزة",
+        why_tag: "لماذا تختارنا", why_title: "لماذا أفق للطيران؟",
+        why_1_t: "الاحترافية العالية", why_1_d: "فريق مختص لإدارة كافة تفاصيل رحلتك بدقة متناهية.",
+        why_2_t: "ثقة وموثوقية", why_2_d: "شفافية كاملة في الأسعار والخدمات المقدمة بدون رسوم خفية.",
+        why_3_t: "سرعة الاستجابة", why_3_d: "معالجة فورية للطلبات والتواصل السريع عبر واتساب.",
+        time_tag: "خطوات بسيطة", time_title: "رحلة العميل معنا",
+        t_1: "اختر وجهتك", t_2: "أرسل طلبك", t_3: "نتواصل معك", t_4: "نرتب رحلتك", t_5: "استمتع برحلتك",
+        gal_tag: "معرض الصور", gal_title: "اكتشف عالم أفق",
+        vid_tag: "عالم الطيران", vid_title: "السفر يبدأ من هنا",
+        faq_tag: "الأسئلة الشائعة", faq_title: "كل ما ترغب في معرفته",
+        form_tag: "حجز فوري", form_title: "خطط لرحلتك مع أفق", form_desc: "أملأ النموذج أدناه وسيقوم النظام بتجهيز طلبك وفتحه مباشرة عبر واتساب لتأكيده.",
+        lbl_name: "الاسم الكريم *", lbl_phone: "رقم الهاتف *", lbl_whatsapp: "رقم الواتساب (اختياري)", lbl_email: "البريد الإلكتروني (اختياري)",
+        lbl_from: "من (مدينة / مطار المغادرة) *", lbl_to: "إلى (مدينة / مطار الوصول) *", lbl_trip_type: "نوع الرحلة",
+        lbl_dep_date: "تاريخ الذهاب *", lbl_ret_date: "تاريخ العودة", lbl_adults: "البالغون (Adults)", lbl_children: "الأطفال (Children)",
+        lbl_infants: "الرضع (Infants)", lbl_transit: "هل تمانع رحلات الترانزيت؟", lbl_cabin: "درجة السفر",
+        lbl_airlines: "شركات الطيران المفضلة (اختياري)", lbl_baggage: "الأمتعة والأحقاد الإضافية", lbl_notes: "ملاحظات أو طلبات خاصة",
+        btn_send_wa: "إرسال الطلب عبر واتساب",
+        footer_links: "روابط سريعة", footer_contact: "تواصل معنا", footer_desc: "رفيقكم الأمثل لسفر فاخر وآمن إلى كافة أنحاء العالم بكل سهولة واحترافية.", rights: "جميع الحقوق محفوظة."
+    },
     en: {
-        pnr: "BOOKING REFERENCE (PNR)",
-        status: "BOOKING STATUS",
-        ticketNo: "TICKET NUMBER",
-        issueDate: "ISSUE DATE",
-        passengers: "PASSENGER DETAILS",
-        passengerName: "PASSENGER NAME",
-        type: "TYPE",
-        passport: "PASSPORT NO.",
-        birthDate: "DATE OF BIRTH",
-        itinerary: "FLIGHT ITINERARY",
-        outbound: "OUTBOUND FLIGHT",
-        inbound: "RETURN FLIGHT",
-        transitFlight: "TRANSIT FLIGHT",
-        flight: "FLIGHT",
-        departure: "DEPARTURE",
-        arrival: "ARRIVAL",
-        terminal: "TERMINAL",
-        transit: "TRANSIT / CONNECTION",
-        transitWait: "Waiting Time",
-        totalFare: "TOTAL FARE AMOUNT",
-        travelNotice: "IMPORTANT TRAVEL INFORMATION",
-        class: "CLASS",
-        seat: "SEAT"
+        nav_home: "Home", nav_about: "About Us", nav_services: "Services", nav_destinations: "Destinations", nav_offers: "Offers", nav_gallery: "Gallery", nav_contact: "Book Now", nav_admin: "Admin",
+        hero_title: "Discover The World With Ofoq Travel", hero_desc: "We make your journey a luxurious and safe experience to the finest global destinations with competitive prices.", hero_btn1: "Explore Services", hero_btn2: "Request Trip",
+        about_tag: "About Us", about_title: "Your Trusted Gateway to Luxury Travel", about_desc: "Ofoq Travel is your ultimate partner for organizing trips, flight tickets, and hotel bookings with the highest standards of professionalism.",
+        feat_1: "Secure & Guaranteed Bookings", feat_2: "24/7 Customer Support", feat_3: "Luxury Tourism Services",
+        serv_tag: "Professional Services", serv_title: "What We Offer For Your Comfort",
+        dest_tag: "Destinations", dest_title: "Explore Top Global Destinations",
+        offer_tag: "Travel Offers", offer_title: "Special & Featured Offers",
+        why_tag: "Why Choose Us", why_title: "Why Ofoq Travel?",
+        why_1_t: "High Professionalism", why_1_d: "Expert team to manage every detail of your journey.",
+        why_2_t: "Trust & Reliability", why_2_d: "Complete transparency in pricing with no hidden fees.",
+        why_3_t: "Fast Response", why_3_d: "Instant request processing and fast WhatsApp communication.",
+        time_tag: "Simple Steps", time_title: "Customer Journey",
+        t_1: "Choose Destination", t_2: "Send Request", t_3: "We Contact You", t_4: "We Arrange Trip", t_5: "Enjoy Your Trip",
+        gal_tag: "Gallery", gal_title: "Discover Ofoq World",
+        vid_tag: "Aviation World", vid_title: "Travel Starts Here",
+        faq_tag: "FAQ", faq_title: "Everything You Need to Know",
+        form_tag: "Instant Booking", form_title: "Plan Your Trip with Ofoq", form_desc: "Fill out the form below and the system will prepare your request directly via WhatsApp.",
+        lbl_name: "Full Name *", lbl_phone: "Phone Number *", lbl_whatsapp: "WhatsApp (Optional)", lbl_email: "Email (Optional)",
+        lbl_from: "From (Departure City/Airport) *", lbl_to: "To (Arrival City/Airport) *", lbl_trip_type: "Trip Type",
+        lbl_dep_date: "Departure Date *", lbl_ret_date: "Return Date", lbl_adults: "Adults", lbl_children: "Children",
+        lbl_infants: "Infants", lbl_transit: "Mind Transit Flights?", lbl_cabin: "Cabin Class",
+        lbl_airlines: "Preferred Airlines (Optional)", lbl_baggage: "Baggage & Notes", lbl_notes: "Special Requests or Notes",
+        btn_send_wa: "Send Request via WhatsApp",
+        footer_links: "Quick Links", footer_contact: "Contact Us", footer_desc: "Your ideal companion for luxurious and safe travel worldwide.", rights: "All Rights Reserved."
     },
     fr: {
-        pnr: "RÉFÉRENCE DE RÉSERVATION (PNR)",
-        status: "STATUT DE RÉSERVATION",
-        ticketNo: "NUMÉRO DE BILLET",
-        issueDate: "DATE D'ÉMISSION",
-        passengers: "DÉTAILS DES PASSAGERS",
-        passengerName: "NOM DU PASSAGER",
-        type: "TYPE",
-        passport: "N° DE PASSEPORT",
-        birthDate: "DATE DE NAISSANCE",
-        itinerary: "ITINÉRAIRE DE VOL",
-        outbound: "VOL ALLER",
-        inbound: "VOL RETOUR",
-        transitFlight: "VOL DE CORRESPONDANCE",
-        flight: "VOL",
-        departure: "DÉPART",
-        arrival: "ARRIVÉE",
-        terminal: "TERMINAL",
-        transit: "ESCALE / CORRESPONDANCE",
-        transitWait: "Temps d'attente",
-        totalFare: "MONTANT TOTAL DU BILLET",
-        travelNotice: "INFORMATIONS IMPORTANTES DE VOYAGE",
-        class: "CLASSE",
-        seat: "SIÈGE"
-    },
-    ar: {
-        pnr: "رمز الحجز (PNR)",
-        status: "حالة الحجز",
-        ticketNo: "رقم التذكرة الإلكترونية",
-        issueDate: "تاريخ الإصدار",
-        passengers: "بيانات المسافرين",
-        passengerName: "اسم المسافر",
-        type: "النوع",
-        passport: "رقم الجواز",
-        birthDate: "تاريخ الميلاد",
-        itinerary: "خط سير الرحلة",
-        outbound: "رحلة الذهاب",
-        inbound: "رحلة العودة",
-        transitFlight: "رحلة ترانزيت",
-        flight: "رقم الرحلة",
-        departure: "المغادرة",
-        arrival: "الوصول",
-        terminal: "المبنى Terminal",
-        transit: "ترانزيت / انتظار",
-        transitWait: "وقت الانتظار",
-        totalFare: "السعر الإجمالي",
-        travelNotice: "تعليمات ومعلومات السفر الهامة",
-        class: "الدرجة",
-        seat: "المقعد"
+        nav_home: "Accueil", nav_about: "À Propos", nav_services: "Services", nav_destinations: "Destinations", nav_offers: "Offres", nav_gallery: "Galerie", nav_contact: "Réserver", nav_admin: "Admin",
+        hero_title: "Découvrez Le Monde Avec Ofoq Travel", hero_desc: "Nous faisons de votre voyage une expérience luxueuse et sûre vers les meilleures destinations mondiales.", hero_btn1: "Explorer les Services", hero_btn2: "Réserver un Voyage",
+        about_tag: "À Propos", about_title: "Votre Passerelle De Confiance Pour Un Voyage De Luxe", about_desc: "Ofoq Travel est votre partenaire idéal pour l'organisation de voyages, billets d'avion et hôtels avec un professionnalisme absolu.",
+        feat_1: "Réservations Sûres", feat_2: "Support Client 24/7", feat_3: "Services Touristiques de Luxe",
+        serv_tag: "Services Professionnels", serv_title: "Ce Que Nous Offrons Pour Votre Confort",
+        dest_tag: "Destinations", dest_title: "Explorez Nos Destinations Mondiales",
+        offer_tag: "Offres de Voyage", offer_title: "Nos Offres Spéciales",
+        why_tag: "Pourquoi Nous Choisir", why_title: "Pourquoi Ofoq Travel?",
+        why_1_t: "Haut Professionnalisme", why_1_d: "Une équipe experte pour gérer les moindres détails.",
+        why_2_t: "Confiance & Fiabilité", why_2_d: "Transparence totale des prix et services.",
+        why_3_t: "Réponse Rapide", why_3_d: "Traitement instantané et communication WhatsApp.",
+        time_tag: "Étapes Simples", time_title: "Parcours Client",
+        t_1: "Choisissez Destination", t_2: "Envoyez Demande", t_3: "Nous Vous Contactons", t_4: "Nous Organisons", t_5: "Profitez",
+        gal_tag: "Galerie", gal_title: "Découvrez Le Monde Ofoq",
+        vid_tag: "Monde de l'Aviation", vid_title: "Le Voyage Commence Ici",
+        faq_tag: "FAQ", faq_title: "Tout Ce Que Vous Devez Savoir",
+        form_tag: "Réservation Instantanée", form_title: "Planifiez Votre Voyage", form_desc: "Remplissez le formulaire ci-dessous pour préparer votre demande directement sur WhatsApp.",
+        lbl_name: "Nom Complet *", lbl_phone: "Téléphone *", lbl_whatsapp: "WhatsApp (Optionnel)", lbl_email: "Email (Optionnel)",
+        lbl_from: "De (Ville/Aéroport de départ) *", lbl_to: "À (Ville/Aéroport d'arrivée) *", lbl_trip_type: "Type de Voyage",
+        lbl_dep_date: "Date de Départ *", lbl_ret_date: "Date de Retour", lbl_adults: "Adultes", lbl_children: "Enfants",
+        lbl_infants: "Nourrissons", lbl_transit: "Vols avec escale?", lbl_cabin: "Classe de Cabine",
+        lbl_airlines: "Compagnies Préférées", lbl_baggage: "Bagages", lbl_notes: "Notes ou Demandes Spéciales",
+        btn_send_wa: "Envoyer via WhatsApp",
+        footer_links: "Liens Rapides", footer_contact: "Contactez-Nous", footer_desc: "Votre compagnon idéal pour un voyage de luxe dans le monde entier.", rights: "Tous droits réservés."
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadSettings();
-    loadDatabases();
-    loadSampleDataIfEmpty();
-    renderDashboard();
-    renderHistoryTable();
-    createNewBooking(false);
+// --- 2. LOCAL PERSISTENCE & INDEXEDDB FOR LOGO & LARGE FILES ---
+let db;
+const DB_NAME = "OfoqTravelDB";
+const DB_VERSION = 1;
+
+function initIndexedDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => {
+            db = request.result;
+            resolve(db);
+        };
+        request.onupgradeneeded = (e) => {
+            const database = e.target.result;
+            if (!database.objectStoreNames.contains("files")) {
+                database.createObjectStore("files", { keyPath: "key" });
+            }
+        };
+    });
+}
+
+function saveFileToIndexedDB(key, fileBlob) {
+    return new Promise((resolve, reject) => {
+        if (!db) { resolve(); return; }
+        const transaction = db.transaction(["files"], "readwrite");
+        const store = transaction.objectStore("files");
+        const request = store.put({ key: key, blob: fileBlob });
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+function getFileFromIndexedDB(key) {
+    return new Promise((resolve, reject) => {
+        if (!db) { resolve(null); return; }
+        const transaction = db.transaction(["files"], "readonly");
+        const store = transaction.objectStore("files");
+        const request = store.get(key);
+        request.onsuccess = () => {
+            resolve(request.result ? request.result.blob : null);
+        };
+        request.onerror = () => reject(request.error);
+    });
+}
+
+// --- 3. STATE MANAGEMENT ---
+let appState = {
+    settings: JSON.parse(localStorage.getItem("ofoq_settings")) || DEFAULT_SETTINGS,
+    hero: JSON.parse(localStorage.getItem("ofoq_hero")) || DEFAULT_HERO,
+    about: JSON.parse(localStorage.getItem("ofoq_about")) || DEFAULT_ABOUT,
+    services: JSON.parse(localStorage.getItem("ofoq_services")) || DEFAULT_SERVICES,
+    destinations: JSON.parse(localStorage.getItem("ofoq_destinations")) || DEFAULT_DESTINATIONS,
+    offers: JSON.parse(localStorage.getItem("ofoq_offers")) || DEFAULT_OFFERS,
+    promo: JSON.parse(localStorage.getItem("ofoq_promo")) || DEFAULT_PROMO,
+    gallery: JSON.parse(localStorage.getItem("ofoq_gallery")) || DEFAULT_GALLERY,
+    videos: JSON.parse(localStorage.getItem("ofoq_videos")) || DEFAULT_VIDEOS,
+    faq: JSON.parse(localStorage.getItem("ofoq_faq")) || DEFAULT_FAQ,
+    requests: JSON.parse(localStorage.getItem("ofoq_requests")) || [],
+    adminPass: localStorage.getItem("ofoq_pass") || "admin123",
+    currentLang: localStorage.getItem("ofoq_lang") || "ar"
+};
+
+function saveState() {
+    localStorage.setItem("ofoq_settings", JSON.stringify(appState.settings));
+    localStorage.setItem("ofoq_hero", JSON.stringify(appState.hero));
+    localStorage.setItem("ofoq_about", JSON.stringify(appState.about));
+    localStorage.setItem("ofoq_services", JSON.stringify(appState.services));
+    localStorage.setItem("ofoq_destinations", JSON.stringify(appState.destinations));
+    localStorage.setItem("ofoq_offers", JSON.stringify(appState.offers));
+    localStorage.setItem("ofoq_promo", JSON.stringify(appState.promo));
+    localStorage.setItem("ofoq_gallery", JSON.stringify(appState.gallery));
+    localStorage.setItem("ofoq_videos", JSON.stringify(appState.videos));
+    localStorage.setItem("ofoq_faq", JSON.stringify(appState.faq));
+    localStorage.setItem("ofoq_requests", JSON.stringify(appState.requests));
+    localStorage.setItem("ofoq_pass", appState.adminPass);
+    localStorage.setItem("ofoq_lang", appState.currentLang);
+}
+
+// --- 4. INIT & RENDERING ---
+document.addEventListener("DOMContentLoaded", async () => {
+    await initIndexedDB();
+    applyLanguage(appState.currentLang);
+    await renderPublicWebsite();
+    setupEventListeners();
 });
 
-function switchTab(tabId) {
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.page-view').forEach(view => view.classList.remove('active'));
+async function renderPublicWebsite() {
+    // 1. Settings & Logo
+    document.getElementById("topPhoneText").textContent = appState.settings.phone;
+    document.getElementById("topPhoneLink").href = `tel:${appState.settings.phone}`;
+    document.getElementById("topEmailText").textContent = appState.settings.email;
+    document.getElementById("topEmailLink").href = `mailto:${appState.settings.email}`;
+    document.getElementById("footerPhone").textContent = appState.settings.phone;
+    document.getElementById("footerEmail").textContent = appState.settings.email;
+    document.getElementById("footerAddress").textContent = appState.settings.address;
+    document.getElementById("footerCompanyName").textContent = appState.settings.companyName;
+    document.getElementById("footerCompanyText").textContent = appState.settings.footerText;
+    document.getElementById("footerCopyName").textContent = appState.settings.companyName;
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
 
-    const activeNav = document.querySelector(`.nav-btn[onclick="switchTab('${tabId}')"]`);
-    if (activeNav) activeNav.classList.add('active');
-
-    const targetView = document.getElementById(`view-${tabId}`);
-    if (targetView) targetView.classList.add('active');
-
-    if (tabId === 'history') {
-        renderHistoryTable();
-    } else if (tabId === 'dashboard') {
-        renderDashboard();
-    } else if (tabId === 'airlines') {
-        renderAirlinesTable();
-    }
-
-    const titles = {
-        'dashboard': 'لوحة التحكم الرئيسيّة',
-        'new-booking': 'إنشاء / تعديل حجز سفر',
-        'history': 'سجل الحجوزات المنشأة',
-        'airlines': 'إدارة شركات الطيران',
-        'settings': 'إعدادات الشركة والهوية'
-    };
-    document.getElementById('pageTitle').innerText = titles[tabId] || 'أفق للطيران';
-}
-
-function switchMobileTab(pane) {
-    document.getElementById('btnFormTab').classList.toggle('active', pane === 'form');
-    document.getElementById('btnPreviewTab').classList.toggle('active', pane === 'preview');
-    
-    document.getElementById('paneForm').style.display = pane === 'form' ? 'flex' : 'none';
-    document.getElementById('panePreview').style.display = pane === 'preview' ? 'block' : 'none';
-}
-
-function createNewBooking(switchToTab = true) {
-    currentBooking = {
-        id: 'OFOQ-' + Math.floor(100000 + Math.random() * 900000),
-        tripType: 'one-way',
-        status: 'مؤكد / CONFIRMED',
-        pnr: '',
-        ticketNumber: '',
-        reference: '',
-        bookingDate: new Date().toISOString().split('T')[0],
-        passengers: [],
-        flights: [],
-        price: '',
-        currency: 'DZD',
-        checkedBaggage: '1x 23 kg',
-        cabinBaggage: '1x 8 kg',
-        notes: ''
-    };
-
-    document.getElementById('tripType').value = 'one-way';
-    document.getElementById('bookingStatus').value = 'مؤكد / CONFIRMED';
-    document.getElementById('pnrCode').value = '';
-    document.getElementById('ticketNumber').value = '';
-    document.getElementById('bookingReference').value = currentBooking.id;
-    document.getElementById('bookingDate').value = currentBooking.bookingDate;
-    document.getElementById('fareAmount').value = '';
-    document.getElementById('fareCurrency').value = 'DZD';
-    document.getElementById('checkedBaggage').value = '1x 23 kg';
-    document.getElementById('cabinBaggage').value = '1x 8 kg';
-    document.getElementById('bookingNotes').value = '';
-
-    document.getElementById('passengersList').innerHTML = '';
-    document.getElementById('flightsList').innerHTML = '';
-    
-    addPassengerInput();
-    addFlightInput();
-
-    updatePreview();
-    if (switchToTab) switchTab('new-booking');
-}
-
-function resetForm() {
-    if (confirm('هل أنت متأكد من إفراغ النموذج؟')) {
-        createNewBooking(false);
-    }
-}
-
-function handleTripTypeChange() {
-    const type = document.getElementById('tripType').value;
-    currentBooking.tripType = type;
-    const flightsContainer = document.getElementById('flightsList');
-    const currentFlightCards = flightsContainer.querySelectorAll('.dynamic-item-card');
-
-    if (type === 'round-trip' && currentFlightCards.length < 2) {
-        addFlightInput();
-    }
-}
-
-function handleFlightDirectionChange(selectElem) {
-    const card = selectElem.closest('.flight-item');
-    const transitGroup = card.querySelector('.transit-wait-group');
-    if (selectElem.value === 'transit') {
-        transitGroup.style.display = 'flex';
+    // Logo Blob from IndexedDB
+    const logoBlob = await getFileFromIndexedDB("company_logo");
+    const logoImgEl = document.getElementById("siteLogoImg");
+    const defaultLogoEl = document.getElementById("defaultLogoText");
+    if (logoBlob) {
+        const logoUrl = URL.createObjectURL(logoBlob);
+        logoImgEl.src = logoUrl;
+        logoImgEl.style.display = "block";
+        defaultLogoEl.style.display = "none";
     } else {
-        transitGroup.style.display = 'none';
+        logoImgEl.style.display = "none";
+        defaultLogoEl.style.display = "flex";
     }
-    updatePreview();
-}
 
-function addPassengerInput(data = {}) {
-    const container = document.getElementById('passengersList');
-    const div = document.createElement('div');
-    div.className = 'dynamic-item-card passenger-item';
-    div.innerHTML = `
-        <button type="button" class="remove-btn" onclick="removePassengerInput(this)"><i class="fa-solid fa-xmark"></i></button>
-        <div class="form-row flex-3">
-            <div class="form-group">
-                <label>نوع المسافر</label>
-                <select class="pass-type" onchange="updatePreview()">
-                    <option value="Adult" ${data.type === 'Adult' ? 'selected' : ''}>بالغ (Adult)</option>
-                    <option value="Child" ${data.type === 'Child' ? 'selected' : ''}>طفل (Child)</option>
-                    <option value="Infant" ${data.type === 'Infant' ? 'selected' : ''}>رضيع (Infant)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>اللقب Title</label>
-                <select class="pass-title" onchange="updatePreview()">
-                    <option value="MR" ${data.title === 'MR' ? 'selected' : ''}>السيد (MR)</option>
-                    <option value="MRS" ${data.title === 'MRS' ? 'selected' : ''}>السيدة (MRS)</option>
-                    <option value="MS" ${data.title === 'MS' ? 'selected' : ''}>الآنسة (MS)</option>
-                    <option value="MSTR" ${data.title === 'MSTR' ? 'selected' : ''}>الطفل (MSTR)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>الاسم الكامل Full Name</label>
-                <input type="text" class="pass-name upper" placeholder="مثال: MOHAMED ARKADAN" value="${data.name || ''}" oninput="updatePreview()">
-            </div>
-        </div>
-        <div class="form-row flex-2">
-            <div class="form-group">
-                <label>رقم جواز السفر Passport No.</label>
-                <input type="text" class="pass-passport upper" placeholder="مثال: A29384019" value="${data.passport || ''}" oninput="updatePreview()">
-            </div>
-            <div class="form-group">
-                <label>تاريخ الميلاد Date of Birth</label>
-                <input type="date" class="pass-birthdate" value="${data.birthDate || ''}" onchange="updatePreview()">
-            </div>
-        </div>
-    `;
-    container.appendChild(div);
-    updatePreview();
-}
-
-function removePassengerInput(btn) {
-    const container = document.getElementById('passengersList');
-    if (container.children.length > 1) {
-        btn.closest('.dynamic-item-card').remove();
-        updatePreview();
+    // 2. Hero Section
+    document.getElementById("heroTitle").textContent = appState.hero.title;
+    document.getElementById("heroDesc").textContent = appState.hero.desc;
+    const heroBgBlob = await getFileFromIndexedDB("hero_bg");
+    const heroMediaContainer = document.getElementById("heroBgMedia");
+    if (heroBgBlob) {
+        heroMediaContainer.style.backgroundImage = `url('${URL.createObjectURL(heroBgBlob)}')`;
     } else {
-        showToast('يجب إبقاء مسافر واحد على الأقل');
+        heroMediaContainer.style.backgroundImage = `url('${appState.hero.bgImage}')`;
     }
-}
 
-function addFlightInput(data = {}) {
-    const container = document.getElementById('flightsList');
-    const div = document.createElement('div');
-    div.className = 'dynamic-item-card flight-item';
-    
-    const flightDir = data.direction || 'outbound';
-    const isTransit = flightDir === 'transit';
-
-    div.innerHTML = `
-        <button type="button" class="remove-btn" onclick="removeFlightInput(this)"><i class="fa-solid fa-xmark"></i></button>
-        <div class="form-row flex-3">
-            <div class="form-group">
-                <label>نوع الرحلة (اتجاهها)</label>
-                <select class="flight-direction" onchange="handleFlightDirectionChange(this)">
-                    <option value="outbound" ${flightDir === 'outbound' ? 'selected' : ''}>ذهاب (Outbound)</option>
-                    <option value="inbound" ${flightDir === 'inbound' ? 'selected' : ''}>عودة (Inbound)</option>
-                    <option value="transit" ${flightDir === 'transit' ? 'selected' : ''}>ترانزيت (Transit)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>شركة الطيران Airline</span>
-                    <button type="button" class="btn-add-inline" onclick="openAirlineModal()" title="إضافة شركة طيران جديدة"><i class="fa-solid fa-plus"></i></button>
-                </label>
-                <input type="text" class="flight-airline" list="airlinesList" placeholder="بحث باسم الشركة أو IATA" value="${data.airline || ''}" oninput="updatePreview()">
-            </div>
-            <div class="form-group">
-                <label>رقم الرحلة Flight No.</label>
-                <input type="text" class="flight-no upper" placeholder="مثال: TK653" value="${data.flightNo || ''}" oninput="updatePreview()">
-            </div>
-        </div>
-        <div class="form-row flex-2 transit-wait-group" style="display: ${isTransit ? 'flex' : 'none'};">
-            <div class="form-group" style="grid-column: span 2;">
-                <label><i class="fa-solid fa-clock"></i> وقت الانتظار اليدوي (Transit Waiting Time)</label>
-                <input type="text" class="flight-transit-wait" placeholder="مثال: 02h 45m في مطار اسطنبول" value="${data.transitWait || ''}" oninput="updatePreview()">
-            </div>
-        </div>
-        <div class="form-row flex-3">
-            <div class="form-group">
-                <label>درجة السفر Class</label>
-                <input type="text" class="flight-class" placeholder="مثال: Economy (Y)" value="${data.bookingClass || 'Economy'}" oninput="updatePreview()">
-            </div>
-            <div class="form-group">
-                <label style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>مطار المغادرة</span>
-                    <button type="button" class="btn-add-inline" onclick="openAirportModal()" title="إضافة مطار جديد"><i class="fa-solid fa-plus"></i></button>
-                </label>
-                <input type="text" class="flight-dep-airport" list="airportsList" placeholder="مثال: ALG - Algiers" value="${data.depAirport || ''}" oninput="updatePreview()">
-            </div>
-            <div class="form-group">
-                <label style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>مطار الوصول</span>
-                    <button type="button" class="btn-add-inline" onclick="openAirportModal()" title="إضافة مطار جديد"><i class="fa-solid fa-plus"></i></button>
-                </label>
-                <input type="text" class="flight-arr-airport" list="airportsList" placeholder="مثال: IST - Istanbul" value="${data.arrAirport || ''}" oninput="updatePreview()">
-            </div>
-        </div>
-        <div class="form-row flex-2">
-            <div class="form-group">
-                <label>تاريخ ووقت المغادرة</label>
-                <div style="display:flex; gap:6px;">
-                    <input type="date" class="flight-dep-date" value="${data.depDate || ''}" onchange="updatePreview()">
-                    <input type="time" class="flight-dep-time" value="${data.depTime || ''}" onchange="updatePreview()">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>تاريخ ووقت الوصول</label>
-                <div style="display:flex; gap:6px;">
-                    <input type="date" class="flight-arr-date" value="${data.arrDate || ''}" onchange="updatePreview()">
-                    <input type="time" class="flight-arr-time" value="${data.arrTime || ''}" onchange="updatePreview()">
-                </div>
-            </div>
-        </div>
-        <div class="form-row flex-2">
-            <div class="form-group">
-                <label>Terminal المغادرة</label>
-                <input type="text" class="flight-dep-terminal" placeholder="مثال: Terminal 1" value="${data.depTerminal || ''}" oninput="updatePreview()">
-            </div>
-            <div class="form-group">
-                <label>رقم المقعد (اختياري)</label>
-                <input type="text" class="flight-seat" placeholder="مثال: 14A" value="${data.seat || ''}" oninput="updatePreview()">
-            </div>
-        </div>
-    `;
-    container.appendChild(div);
-    initDatalists();
-    updatePreview();
-}
-
-function removeFlightInput(btn) {
-    const container = document.getElementById('flightsList');
-    if (container.children.length > 1) {
-        btn.closest('.dynamic-item-card').remove();
-        updatePreview();
+    // 3. About Section
+    document.getElementById("aboutTitle").textContent = appState.about.title;
+    document.getElementById("aboutDesc").textContent = appState.about.desc;
+    const aboutBlob = await getFileFromIndexedDB("about_img");
+    if (aboutBlob) {
+        document.getElementById("aboutImage").src = URL.createObjectURL(aboutBlob);
     } else {
-        showToast('يجب إبقاء رحلة واحدة على الأقل');
-    }
-}
-
-function initDatalists() {
-    let dlA = document.getElementById('airlinesList');
-    if (!dlA) {
-        dlA = document.createElement('datalist');
-        dlA.id = 'airlinesList';
-        document.body.appendChild(dlA);
-    }
-    dlA.innerHTML = AIRLINES_DATABASE.map(a => `<option value="${a.code} - ${a.name}">`).join('');
-
-    let dlP = document.getElementById('airportsList');
-    if (!dlP) {
-        dlP = document.createElement('datalist');
-        dlP.id = 'airportsList';
-        document.body.appendChild(dlP);
-    }
-    dlP.innerHTML = AIRPORTS_DATABASE.map(p => `<option value="${p.iata} - ${p.city} (${p.airport})">`).join('');
-}
-
-function renderAirlinesTable() {
-    const tbody = document.getElementById('airlinesTableBody');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-
-    AIRLINES_DATABASE.forEach((airline, idx) => {
-        let logoHtml = airline.logo || '✈';
-        if (airline.logo && (airline.logo.startsWith('data:image') || airline.logo.startsWith('http'))) {
-            logoHtml = `<img src="${airline.logo}" alt="Logo" style="max-height: 30px; max-width: 30px; object-fit: contain;">`;
-        }
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${idx + 1}</td>
-            <td><div style="width: 36px; height: 36px; display:flex; align-items:center; justify-content:center; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px;">${logoHtml}</div></td>
-            <td><strong class="font-mono">${airline.code}</strong></td>
-            <td>${airline.name}</td>
-            <td>
-                <button class="btn btn-sm btn-outline" onclick="openEditAirlineModal('${airline.code}')" title="تعديل"><i class="fa-solid fa-pen"></i> تعديل</button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
-function openAirlineModal() {
-    document.getElementById('airlineModalTitle').innerHTML = `<i class="fa-solid fa-plane"></i> إضافة شركة طيران جديدة`;
-    document.getElementById('editAirlineOriginalCode').value = '';
-    document.getElementById('newAirlineCode').value = '';
-    document.getElementById('newAirlineName').value = '';
-    document.getElementById('newAirlineLogo').value = '✈';
-    document.getElementById('newAirlineLogoFile').value = '';
-    document.getElementById('newAirlineLogoPreview').innerHTML = '';
-    newAirlineLogoBase64 = '';
-    document.getElementById('airlineModal').classList.add('active');
-}
-
-function openEditAirlineModal(code) {
-    const airline = AIRLINES_DATABASE.find(a => a.code === code);
-    if (!airline) return;
-
-    document.getElementById('airlineModalTitle').innerHTML = `<i class="fa-solid fa-pen"></i> تعديل بيانات شركة الطيران: ${airline.name}`;
-    document.getElementById('editAirlineOriginalCode').value = airline.code;
-    document.getElementById('newAirlineCode').value = airline.code;
-    document.getElementById('newAirlineName').value = airline.name;
-    document.getElementById('newAirlineLogo').value = (airline.logo && !airline.logo.startsWith('data:image')) ? airline.logo : '';
-    document.getElementById('newAirlineLogoFile').value = '';
-    
-    newAirlineLogoBase64 = '';
-    if (airline.logo && airline.logo.startsWith('data:image')) {
-        document.getElementById('newAirlineLogoPreview').innerHTML = `<img src="${airline.logo}" alt="Logo Preview" style="max-height: 50px; margin-top: 5px;">`;
-    } else {
-        document.getElementById('newAirlineLogoPreview').innerHTML = '';
+        document.getElementById("aboutImage").src = appState.about.image;
     }
 
-    document.getElementById('airlineModal').classList.add('active');
-}
-
-function handleNewAirlineLogoUpload(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-        newAirlineLogoBase64 = evt.target.result;
-        document.getElementById('newAirlineLogoPreview').innerHTML = `<img src="${newAirlineLogoBase64}" alt="Logo Preview" style="max-height: 50px; margin-top: 5px;">`;
-        showToast('تم تحميل شعار شركة الطيران بنجاح');
-    };
-    reader.readAsDataURL(file);
-}
-
-function saveNewAirline() {
-    const originalCode = document.getElementById('editAirlineOriginalCode').value.trim().toUpperCase();
-    const code = document.getElementById('newAirlineCode').value.trim().toUpperCase();
-    const name = document.getElementById('newAirlineName').value.trim();
-    let logoInput = document.getElementById('newAirlineLogo').value.trim();
-
-    if (!code || !name) {
-        showToast('يرجى إدخال رمز الاسم والشركة بشكل صحيح');
-        return;
-    }
-
-    if (originalCode) {
-        const index = AIRLINES_DATABASE.findIndex(a => a.code === originalCode);
-        if (index >= 0) {
-            let finalLogo = AIRLINES_DATABASE[index].logo;
-            if (newAirlineLogoBase64) {
-                finalLogo = newAirlineLogoBase64;
-            } else if (logoInput) {
-                finalLogo = logoInput;
-            }
-            AIRLINES_DATABASE[index] = { code, name, logo: finalLogo };
-        }
-    } else {
-        let logo = logoInput || '✈';
-        if (newAirlineLogoBase64) {
-            logo = newAirlineLogoBase64;
-        }
-        AIRLINES_DATABASE.push({ code, name, logo });
-    }
-
-    localStorage.setItem('ofoq_airlines', JSON.stringify(AIRLINES_DATABASE));
-    initDatalists();
-    renderAirlinesTable();
-    closeModal('airlineModal');
-    showToast(`تم حفظ شركة الطيران (${name}) بنجاح ✓`);
-}
-
-function openAirportModal() {
-    document.getElementById('newAirportIata').value = '';
-    document.getElementById('newAirportCity').value = '';
-    document.getElementById('newAirportName').value = '';
-    document.getElementById('newAirportCountry').value = '';
-    document.getElementById('airportModal').classList.add('active');
-}
-
-function saveNewAirport() {
-    const iata = document.getElementById('newAirportIata').value.trim().toUpperCase();
-    const city = document.getElementById('newAirportCity').value.trim();
-    const airport = document.getElementById('newAirportName').value.trim();
-    const country = document.getElementById('newAirportCountry').value.trim();
-
-    if (!iata || !city) {
-        showToast('يرجى إدخال رمز المطار والمدينة');
-        return;
-    }
-
-    AIRPORTS_DATABASE.push({ iata, city, airport: airport || city, country: country || '' });
-    localStorage.setItem('ofoq_airports', JSON.stringify(AIRPORTS_DATABASE));
-    initDatalists();
-    closeModal('airportModal');
-    showToast(`تم حفظ المطار (${iata} - ${city}) بنجاح ✓`);
-}
-
-function updatePreview() {
-    const lang = document.getElementById('pdfLanguage').value || 'en';
-    const t = TRANSLATIONS[lang];
-
-    currentBooking.pnr = document.getElementById('pnrCode').value.toUpperCase();
-    currentBooking.ticketNumber = document.getElementById('ticketNumber').value;
-    currentBooking.status = document.getElementById('bookingStatus').value;
-    currentBooking.bookingDate = document.getElementById('bookingDate').value;
-    currentBooking.price = document.getElementById('fareAmount').value;
-    currentBooking.currency = document.getElementById('fareCurrency').value;
-    currentBooking.checkedBaggage = document.getElementById('checkedBaggage').value;
-    currentBooking.cabinBaggage = document.getElementById('cabinBaggage').value;
-
-    document.getElementById('docCheckedBaggage').innerText = currentBooking.checkedBaggage || '1x 23 kg';
-    document.getElementById('docCabinBaggage').innerText = currentBooking.cabinBaggage || '1x 8 kg';
-
-    document.getElementById('lblPNR').innerText = t.pnr;
-    document.getElementById('docPNR').innerText = currentBooking.pnr || '-------';
-    document.getElementById('lblStatus').innerText = t.status;
-    document.getElementById('docStatus').innerText = currentBooking.status;
-
-    const boxTicket = document.getElementById('boxTicketNo');
-    if (currentBooking.ticketNumber) {
-        boxTicket.style.display = 'flex';
-        document.getElementById('lblTicketNo').innerText = t.ticketNo;
-        document.getElementById('docTicketNo').innerText = currentBooking.ticketNumber;
-    } else {
-        boxTicket.style.display = 'none';
-    }
-
-    const boxIssue = document.getElementById('boxIssueDate');
-    if (currentBooking.bookingDate) {
-        boxIssue.style.display = 'flex';
-        document.getElementById('lblIssueDate').innerText = t.issueDate;
-        document.getElementById('docIssueDate').innerText = formatDateDisplay(currentBooking.bookingDate);
-    } else {
-        boxIssue.style.display = 'none';
-    }
-
-    document.getElementById('secTitlePassengers').innerHTML = `<i class="fa-solid fa-users"></i> ${t.passengers}`;
-    document.getElementById('thPassName').innerText = t.passengerName;
-    document.getElementById('thPassType').innerText = t.type;
-    document.getElementById('thPassport').innerText = t.passport;
-    document.getElementById('thBirthDate').innerText = t.birthDate;
-
-    const passCards = document.querySelectorAll('.passenger-item');
-    const passBody = document.getElementById('docPassengersBody');
-    passBody.innerHTML = '';
-
-    currentBooking.passengers = [];
-    passCards.forEach(card => {
-        const type = card.querySelector('.pass-type').value;
-        const title = card.querySelector('.pass-title').value;
-        const name = card.querySelector('.pass-name').value.toUpperCase();
-        const passport = card.querySelector('.pass-passport').value.toUpperCase();
-        const birthDate = card.querySelector('.pass-birthdate').value;
-
-        if (name || passport) {
-            currentBooking.passengers.push({ type, title, name, passport, birthDate });
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>${title} ${name || 'N/A'}</strong></td>
-                <td>${type}</td>
-                <td>${passport || 'N/A'}</td>
-                <td>${birthDate ? formatDateDisplay(birthDate) : 'N/A'}</td>
-            `;
-            passBody.appendChild(tr);
-        }
-    });
-
-    if (currentBooking.passengers.length === 0) {
-        passBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94A3B8;">No passenger data entered</td></tr>`;
-    }
-
-    document.getElementById('secTitleFlightItinerary').innerHTML = `<i class="fa-solid fa-plane"></i> ${t.itinerary}`;
-    const flightCards = document.querySelectorAll('.flight-item');
-    const flightsContainer = document.getElementById('docFlightsContainer');
-    flightsContainer.innerHTML = '';
-
-    currentBooking.flights = [];
-
-    flightCards.forEach((card, idx) => {
-        const direction = card.querySelector('.flight-direction').value;
-        const airlineVal = card.querySelector('.flight-airline').value;
-        const flightNo = card.querySelector('.flight-no').value.toUpperCase();
-        const bClass = card.querySelector('.flight-class').value;
-        const depAirport = card.querySelector('.flight-dep-airport').value;
-        const depDate = card.querySelector('.flight-dep-date').value;
-        const depTime = card.querySelector('.flight-dep-time').value;
-        const arrAirport = card.querySelector('.flight-arr-airport').value;
-        const arrDate = card.querySelector('.flight-arr-date').value;
-        const arrTime = card.querySelector('.flight-arr-time').value;
-        const depTerm = card.querySelector('.flight-dep-terminal').value;
-        const seat = card.querySelector('.flight-seat').value;
-        const transitWait = card.querySelector('.flight-transit-wait').value;
-
-        const depCode = extractIataCode(depAirport);
-        const arrCode = extractIataCode(arrAirport);
-
-        const flightObj = {
-            direction, airline: airlineVal, flightNo, bClass, depAirport, depCode, depDate, depTime,
-            arrAirport, arrCode, arrDate, arrTime, depTerm, seat, transitWait
-        };
-        currentBooking.flights.push(flightObj);
-
-        if (direction === 'transit') {
-            const transitDiv = document.createElement('div');
-            transitDiv.className = 'doc-transit-card transit-highlight';
-            transitDiv.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div class="transit-icon-badge"><i class="fa-solid fa-plane-circle-check"></i></div>
-                    <div>
-                        <span><strong>${t.transit}:</strong> ${t.transitWait}: <strong>${transitWait || 'غير محدد'}</strong></span>
-                    </div>
-                </div>
-                <strong><i class="fa-solid fa-exchange-alt"></i> تحويل طائرة</strong>
-            `;
-            flightsContainer.appendChild(transitDiv);
-        }
-
-        const isOutbound = direction === 'outbound';
-        const isInbound = direction === 'inbound';
-        const cardDiv = document.createElement('div');
-        
-        let cardClass = 'doc-flight-card outbound';
-        if (isInbound) cardClass = 'doc-flight-card inbound';
-        if (direction === 'transit') cardClass = 'doc-flight-card transit-card-style';
-
-        cardDiv.className = cardClass;
-        cardDiv.innerHTML = `
-            <div class="flight-card-header">
-                <div class="airline-info">
-                    <div class="airline-logo-box">${extractAirlineLogo(airlineVal)}</div>
-                    <div>
-                        <div class="airline-name">${airlineVal || 'Airline'}</div>
-                        <span class="text-sm">${direction === 'transit' ? t.transitFlight : (isOutbound ? t.outbound : t.inbound)}</span>
-                    </div>
-                </div>
-                <div class="flight-num-badge">${t.flight} ${flightNo || '---'}</div>
+    // 4. Promo Banner
+    const promoSection = document.getElementById("promoBannerSection");
+    if (appState.promo && appState.promo.active) {
+        promoSection.style.display = "block";
+        document.getElementById("featuredPromoCard").innerHTML = `
+            <div>
+                <h3><i class="fa-solid fa-bullhorn"></i> ${appState.promo.title}</h3>
+                <p class="mt-2">${appState.promo.desc}</p>
             </div>
-            <div class="flight-route-grid">
-                <div class="route-point">
-                    <div class="airport-code">${depCode}</div>
-                    <div class="city-name">${extractCityName(depAirport)}</div>
-                    <div class="flight-time-big">${depTime || '--:--'}</div>
-                    <div class="flight-date-str">${formatDateDisplay(depDate)}</div>
-                    ${depTerm ? `<span class="terminal-tag">${t.terminal} ${depTerm}</span>` : ''}
-                </div>
-                <div class="route-center">
-                    <i class="fa-solid ${direction === 'transit' ? 'fa-plane-circle-exclamation' : (isOutbound ? 'fa-plane-departure' : 'fa-plane-arrival')} plane-path-icon"></i>
-                </div>
-                <div class="route-point destination">
-                    <div class="airport-code">${arrCode}</div>
-                    <div class="city-name">${extractCityName(arrAirport)}</div>
-                    <div class="flight-time-big">${arrTime || '--:--'}</div>
-                    <div class="flight-date-str">${formatDateDisplay(arrDate)}</div>
-                </div>
-            </div>
-            <div class="flight-extras-footer">
-                ${bClass ? `<span><strong>${t.class}:</strong> ${bClass}</span>` : ''}
-                ${seat ? `<span><strong>${t.seat}:</strong> ${seat}</span>` : ''}
+            <div class="promo-badge">
+                <span class="btn btn-primary">${appState.promo.discount}</span>
             </div>
         `;
-        flightsContainer.appendChild(cardDiv);
-    });
-
-    const priceBand = document.getElementById('docPriceBand');
-    if (currentBooking.price) {
-        priceBand.style.display = 'flex';
-        document.getElementById('lblTotalFare').innerText = t.totalFare;
-        document.getElementById('docPriceVal').innerText = `${Number(currentBooking.price).toLocaleString()} ${currentBooking.currency}`;
     } else {
-        priceBand.style.display = 'none';
+        promoSection.style.display = "none";
     }
 
-    document.getElementById('lblNoticeTitle').innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${t.travelNotice}`;
-    const instrList = document.getElementById('docInstructionsList');
-    instrList.innerHTML = '';
-    const instructionsText = typeof appSettings.instructions === 'string' ? appSettings.instructions : (Array.isArray(appSettings.instructions) ? appSettings.instructions.join('\n') : '');
-    const lines = instructionsText.split('\n');
-    lines.forEach(line => {
-        if (line.trim()) {
-            const li = document.createElement('li');
-            li.innerText = line;
-            instrList.appendChild(li);
-        }
-    });
-}
+    // 5. Services Grid
+    const servGrid = document.getElementById("servicesGrid");
+    servGrid.innerHTML = appState.services.map(s => `
+        <div class="service-card">
+            <i class="fa-solid ${s.icon || 'fa-plane'}"></i>
+            <h3>${s.title}</h3>
+            <p>${s.desc}</p>
+        </div>
+    `).join("");
 
-function extractIataCode(str) {
-    if (!str) return '---';
-    const match = str.match(/\b[A-Z]{3}\b/);
-    return match ? match[0] : str.substring(0, 3).toUpperCase();
-}
+    // 6. Destinations Grid
+    const destGrid = document.getElementById("destinationsGrid");
+    destGrid.innerHTML = appState.destinations.map(d => `
+        <div class="destination-card">
+            <img src="${d.image}" alt="${d.city}">
+            <div class="destination-overlay">
+                <h3>${d.city} - ${d.country}</h3>
+                <p>${d.desc}</p>
+            </div>
+        </div>
+    `).join("");
 
-function extractCityName(str) {
-    if (!str) return 'Destination';
-    return str.split('-')[1] || str.split('(')[0] || str;
-}
+    // 7. Offers Grid
+    const offersGrid = document.getElementById("offersGrid");
+    offersGrid.innerHTML = appState.offers.map(o => `
+        <div class="offer-card">
+            <div class="offer-img">
+                <img src="${o.image}" alt="${o.title}">
+                <span class="offer-price-tag">${o.price}</span>
+            </div>
+            <div class="offer-content">
+                <h3>${o.title}</h3>
+                <p><i class="fa-solid fa-location-dot"></i> ${o.dest}</p>
+                <p>${o.desc}</p>
+                <a href="#contact" class="btn btn-primary btn-sm w-100 text-center">اطلب هذا العرض</a>
+            </div>
+        </div>
+    `).join("");
 
-function extractAirlineLogo(str) {
-    if (!str) return '✈';
-    const cleanStr = str.trim();
-    const found = AIRLINES_DATABASE.find(a => 
-        cleanStr.toUpperCase().includes(a.code) || 
-        cleanStr.toLowerCase().includes(a.name.toLowerCase()) ||
-        a.code === cleanStr.toUpperCase()
-    );
-    if (found && found.logo) {
-        if (found.logo.startsWith('data:image') || found.logo.startsWith('http')) {
-            return `<img src="${found.logo}" alt="Logo" style="width:100%;height:100%;object-fit:contain;border-radius:4px;">`;
-        }
-        return found.logo;
-    }
-    const match = cleanStr.match(/^[A-Z0-9]{2}/);
-    return match ? match[0] : '✈';
-}
+    // 8. Gallery Grid
+    const galleryGrid = document.getElementById("galleryGrid");
+    galleryGrid.innerHTML = appState.gallery.map(g => `
+        <div class="gallery-item">
+            <img src="${g.image}" alt="${g.title}">
+        </div>
+    `).join("");
 
-function formatDateDisplay(dateStr) {
-    if (!dateStr) return '---';
-    const d = new Date(dateStr);
-    if (isNaN(d)) return dateStr;
-    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-}
+    // 9. Videos Grid
+    const videosGrid = document.getElementById("videosGrid");
+    videosGrid.innerHTML = appState.videos.map(v => `
+        <div class="video-card">
+            <div class="video-player-box">
+                <iframe src="${v.url}" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div style="padding: 15px;">
+                <h3>${v.title}</h3>
+            </div>
+        </div>
+    `).join("");
 
-function getStoredBookings() {
-    return JSON.parse(localStorage.getItem('ofoq_bookings') || '[]');
-}
-
-function saveBookingToStorage(booking) {
-    let bookings = getStoredBookings();
-    const index = bookings.findIndex(b => b.id === booking.id);
-    if (index >= 0) {
-        bookings[index] = booking;
-    } else {
-        bookings.unshift(booking);
-    }
-    localStorage.setItem('ofoq_bookings', JSON.stringify(bookings));
-}
-
-function deleteBooking(id) {
-    if (confirm('هل أنت متأكد من حذف هذا الحجز نهائياً؟')) {
-        let bookings = getStoredBookings().filter(b => b.id !== id);
-        localStorage.setItem('ofoq_bookings', JSON.stringify(bookings));
-        showToast('تم حذف الحجز بنجاح');
-        renderDashboard();
-        renderHistoryTable();
-    }
-}
-
-function saveCurrentBooking() {
-    updatePreview();
-    if (!currentBooking.pnr && currentBooking.passengers.length === 0) {
-        showToast('يرجى إدخال رمز PNR أو اسم المسافر للحفظ');
-        return;
-    }
-    saveBookingToStorage(currentBooking);
-    showToast('تم حفظ الحجز في التخزين المحلي بنجاح ✓');
-    renderDashboard();
-    renderHistoryTable();
-}
-
-function loadBookingForEdit(id) {
-    const booking = getStoredBookings().find(b => b.id === id);
-    if (!booking) return;
-
-    currentBooking = JSON.parse(JSON.stringify(booking));
-
-    document.getElementById('tripType').value = currentBooking.tripType || 'one-way';
-    document.getElementById('bookingStatus').value = currentBooking.status || 'مؤكد / CONFIRMED';
-    document.getElementById('pnrCode').value = currentBooking.pnr || '';
-    document.getElementById('ticketNumber').value = currentBooking.ticketNumber || '';
-    document.getElementById('bookingReference').value = currentBooking.id;
-    document.getElementById('bookingDate').value = currentBooking.bookingDate || '';
-    document.getElementById('fareAmount').value = currentBooking.price || '';
-    document.getElementById('fareCurrency').value = currentBooking.currency || 'DZD';
-    document.getElementById('checkedBaggage').value = currentBooking.checkedBaggage || '1x 23 kg';
-    document.getElementById('cabinBaggage').value = currentBooking.cabinBaggage || '1x 8 kg';
-
-    const passContainer = document.getElementById('passengersList');
-    passContainer.innerHTML = '';
-    (currentBooking.passengers || []).forEach(p => addPassengerInput(p));
-    if (currentBooking.passengers.length === 0) addPassengerInput();
-
-    const flightContainer = document.getElementById('flightsList');
-    flightContainer.innerHTML = '';
-    (currentBooking.flights || []).forEach(f => addFlightInput(f));
-    if (currentBooking.flights.length === 0) addFlightInput();
-
-    updatePreview();
-    switchTab('new-booking');
-    showToast('تم تحميل بيانات الحجز للتعديل');
-}
-
-function cloneBooking(id) {
-    const booking = getStoredBookings().find(b => b.id === id);
-    if (!booking) return;
-    loadBookingForEdit(id);
-    currentBooking.id = 'OFOQ-' + Math.floor(100000 + Math.random() * 900000);
-    currentBooking.pnr = currentBooking.pnr + '-COPY';
-    document.getElementById('pnrCode').value = currentBooking.pnr;
-    document.getElementById('bookingReference').value = currentBooking.id;
-    updatePreview();
-    showToast('تم نسخ الحجز كمسودة جديدة');
-}
-
-function renderDashboard() {
-    const bookings = getStoredBookings() || [];
+    // 10. FAQ Accordion
+    const faqAccordion = document.getElementById("faqAccordion");
+    faqAccordion.innerHTML = appState.faq.map(f => `
+        <div class="faq-item">
+            <div class="faq-question">${f.q} <i class="fa-solid fa-chevron-down"></i></div>
+            <div class="faq-answer" style="display:none;">${f.p || f.a}</div>
+        </div>
+    `).join("");
     
-    document.getElementById('statTotal').innerText = bookings.length;
-    document.getElementById('statConfirmed').innerText = bookings.filter(b => (b.status || '').includes('CONFIRMED')).length;
-    document.getElementById('statPending').innerText = bookings.filter(b => (b.status || '').includes('HOLD')).length;
-
-    const recentBody = document.getElementById('dashRecentBookings');
-    recentBody.innerHTML = '';
-
-    bookings.slice(0, 5).forEach(b => {
-        const passName = b.passengers && b.passengers[0] ? `${b.passengers[0].title || ''} ${b.passengers[0].name || ''}`.trim() : 'N/A';
-        const route = b.flights && b.flights.length > 0 ? `${b.flights[0].depCode || '---'} → ${b.flights[b.flights.length - 1].arrCode || '---'}` : '---';
-        const depDate = b.flights && b.flights[0] && b.flights[0].depDate ? formatDateDisplay(b.flights[0].depDate) : '---';
-        const status = b.status || 'UNKNOWN';
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><strong class="font-mono">${b.pnr || '---'}</strong></td>
-            <td>${passName}</td>
-            <td>${route}</td>
-            <td>${depDate}</td>
-            <td><span class="status-badge ${status.includes('CONFIRMED') ? 'status-confirmed' : 'status-pending'}">${status}</span></td>
-            <td>
-                <button class="btn btn-sm btn-outline" onclick="loadBookingForEdit('${b.id}')"><i class="fa-solid fa-pen"></i></button>
-            </td>
-        `;
-        recentBody.appendChild(tr);
-    });
-}
-
-function renderHistoryTable() {
-    const bookings = getStoredBookings() || [];
-    const tbody = document.getElementById('historyTableBody');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-
-    bookings.forEach((b, idx) => {
-        const passName = b.passengers && b.passengers[0] ? `${b.passengers[0].title || ''} ${b.passengers[0].name || ''}`.trim() : 'N/A';
-        const route = b.flights && b.flights.length > 0 ? `${b.flights[0].depCode || '---'} → ${b.flights[b.flights.length - 1].arrCode || '---'}` : '---';
-        const depDate = b.flights && b.flights[0] && b.flights[0].depDate ? formatDateDisplay(b.flights[0].depDate) : '---';
-        const price = b.price ? `${b.price} ${b.currency || ''}`.trim() : '---';
-        const status = b.status || 'UNKNOWN';
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${idx + 1}</td>
-            <td><strong class="font-mono">${b.pnr || '---'}</strong></td>
-            <td>${passName}</td>
-            <td>${route}</td>
-            <td>${depDate}</td>
-            <td><span class="status-badge ${status.includes('CONFIRMED') ? 'status-confirmed' : 'status-pending'}">${status}</span></td>
-            <td>${price}</td>
-            <td>
-                <button class="btn btn-sm btn-outline" onclick="loadBookingForEdit('${b.id}')" title="تعديل"><i class="fa-solid fa-pen"></i> تعديل</button>
-                <button class="btn btn-sm btn-outline" onclick="cloneBooking('${b.id}')" title="نسخ"><i class="fa-solid fa-copy"></i></button>
-                <button class="btn btn-sm btn-danger" onclick="deleteBooking('${b.id}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
-function filterHistory() {
-    const q = document.getElementById('historySearchInput').value.toLowerCase();
-    const rows = document.querySelectorAll('#historyTableBody tr');
-    rows.forEach(row => {
-        const text = row.innerText.toLowerCase();
-        row.style.display = text.includes(q) ? '' : 'none';
-    });
-}
-
-// دالة تصدير الـ PDF محسنة لصفحات A4 والتوزيع التلقائي دون قص أو صفحات فارغة
-function triggerPDFExport() {
-    updatePreview();
-    const element = document.getElementById('printSheet');
-    
-    let primaryPassenger = 'Itinerary';
-    if (currentBooking.passengers && currentBooking.passengers.length > 0 && currentBooking.passengers[0].name) {
-        primaryPassenger = currentBooking.passengers[0].name.trim();
-    }
-    const cleanFilename = primaryPassenger.replace(/[\/\\?%*:|"<>]/g, '_') + '.pdf';
-
-    const opt = {
-        margin: [8, 8, 8, 8],
-        filename: cleanFilename,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    showToast('جاري إنشاء وتحميل ملف الـ PDF متوافق مع مقاس A4...');
-    html2pdf().set(opt).from(element).save().then(() => {
-        showToast('تم تصدير ملف PDF بنجاح ✓');
-    });
-}
-
-function quickImportModal() {
-    document.getElementById('importModal').classList.add('active');
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove('active');
-}
-
-function processOCRFile(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const statusDiv = document.getElementById('ocrStatus');
-    statusDiv.innerText = 'جاري قراءة ومعالجة المستند بواسطة OCR... (يرجى الانتظار)';
-
-    Tesseract.recognize(file, 'eng', { logger: m => console.log(m) }).then(({ data: { text } }) => {
-        document.getElementById('importRawText').value = text;
-        statusDiv.innerText = 'تمت قراءة المستند بنجاح! يمكنك الضغط على "تفكيك واستخراج البيانات".';
-        showToast('تم إجراء الـ OCR بنجاح');
-    }).catch(err => {
-        statusDiv.innerText = 'حدث خطأ أثناء الـ OCR. يمكنك لصق النص يدوياً.';
-    });
-}
-
-function executeTextImport() {
-    const rawText = document.getElementById('importRawText').value;
-    if (!rawText.trim()) {
-        showToast('يرجى لصق نص أو رفع مستند أولاً');
-        return;
-    }
-    parseBookingText(rawText);
-    closeModal('importModal');
-    switchTab('new-booking');
-    showToast('تم اكتشاف البيانات تلقائياً، يرجى مراجعتها وتأكيد الحفظ ✓');
-}
-
-function parseBookingText(text) {
-    createNewBooking(false);
-    const pnrMatch = text.match(/\b(PNR|REF|BOOKING REF|CONFIRMATION):\s*([A-Z0-9]{6})\b/i) || text.match(/\b([A-Z0-9]{6})\b/);
-    if (pnrMatch) {
-        document.getElementById('pnrCode').value = pnrMatch[2] || pnrMatch[1];
-    }
-    const ticketMatch = text.match(/\b(TICKET|TKT|ETKT):\s*([0-9]{3}[-\s]?[0-9]{10})\b/i);
-    if (ticketMatch) {
-        document.getElementById('ticketNumber').value = ticketMatch[2];
-    }
-    const passMatches = text.match(/\b(MR|MRS|MS|MSTR)\/\s*([A-Z\s]+)\b/g);
-    if (passMatches && passMatches.length > 0) {
-        document.getElementById('passengersList').innerHTML = '';
-        passMatches.forEach(pm => {
-            const parts = pm.split('/');
-            addPassengerInput({
-                title: parts[0].trim(),
-                name: parts[1] ? parts[1].trim() : ''
-            });
+    // Setup FAQ toggles
+    document.querySelectorAll(".faq-question").forEach(item => {
+        item.addEventListener("click", () => {
+            const ans = item.nextElementSibling;
+            ans.style.display = ans.style.display === "block" ? "none" : "block";
         });
-    }
-    updatePreview();
+    });
 }
 
-function loadSettings() {
-    const saved = localStorage.getItem('ofoq_settings');
-    if (saved) {
-        appSettings = JSON.parse(saved);
-    }
-    applySettingsUI();
+function applyLanguage(lang) {
+    appState.currentLang = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = (lang === "ar") ? "rtl" : "ltr";
+    document.getElementById("langSelector").value = lang;
+
+    const t = TRANSLATIONS[lang] || TRANSLATIONS.ar;
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (t[key]) el.textContent = t[key];
+    });
 }
 
-function applySettingsUI() {
-    document.getElementById('cfgCompanyNameAr').value = appSettings.companyNameAr;
-    document.getElementById('cfgCompanyNameEn').value = appSettings.companyNameEn;
-    document.getElementById('cfgPhone').value = appSettings.phone;
-    document.getElementById('cfgEmail').value = appSettings.email;
-    document.getElementById('cfgAddress').value = appSettings.address;
-    document.getElementById('cfgWhatsapp').value = appSettings.whatsapp;
-    document.getElementById('cfgWebsite').value = appSettings.website;
-    document.getElementById('cfgFooterText').value = appSettings.footerText;
-    document.getElementById('cfgInstructions').value = appSettings.instructions;
+// --- 5. EVENT LISTENERS & FORM SUBMISSION ---
+function setupEventListeners() {
+    // Mobile menu toggle
+    const hamburger = document.getElementById("hamburger");
+    const navMenu = document.getElementById("navMenu");
+    hamburger.addEventListener("click", () => {
+        navMenu.classList.toggle("active");
+    });
 
-    document.getElementById('docAgencyName').innerText = appSettings.companyNameAr;
-    document.getElementById('docAgencySubName').innerText = appSettings.companyNameEn;
-    document.getElementById('renderPhone').innerHTML = `<i class="fa-solid fa-phone"></i> <span>${appSettings.phone}</span>`;
-    document.getElementById('renderEmail').innerHTML = `<i class="fa-solid fa-envelope"></i> <span>${appSettings.email}</span>`;
-    document.getElementById('renderAddress').innerHTML = `<i class="fa-solid fa-location-dot"></i> <span>${appSettings.address}</span>`;
-    document.getElementById('docFooterText').innerText = appSettings.footerText;
+    // Language switcher
+    document.getElementById("langSelector").addEventListener("change", (e) => {
+        applyLanguage(e.target.value);
+        saveState();
+    });
 
-    if (appSettings.logoBase64) {
-        const imgHtml = `<img src="${appSettings.logoBase64}" alt="Logo">`;
-        document.getElementById('docLogoDynamic').innerHTML = imgHtml;
-        document.getElementById('sidebarLogoContainer').innerHTML = imgHtml;
-        document.getElementById('cfgLogoPreview').innerHTML = imgHtml;
-    }
-}
+    // Trip type handling for return date
+    document.getElementById("custTripType").addEventListener("change", (e) => {
+        const retGroup = document.getElementById("returnDateGroup");
+        if (e.target.value === "One Way") {
+            retGroup.style.display = "none";
+            document.getElementById("custRetDate").removeAttribute("required");
+        } else {
+            retGroup.style.display = "flex";
+        }
+    });
 
-function saveSettings() {
-    appSettings.companyNameAr = document.getElementById('cfgCompanyNameAr').value;
-    appSettings.companyNameEn = document.getElementById('cfgCompanyNameEn').value;
-    appSettings.phone = document.getElementById('cfgPhone').value;
-    appSettings.email = document.getElementById('cfgEmail').value;
-    appSettings.address = document.getElementById('cfgAddress').value;
-    appSettings.whatsapp = document.getElementById('cfgWhatsapp').value;
-    appSettings.website = document.getElementById('cfgWebsite').value;
-    appSettings.footerText = document.getElementById('cfgFooterText').value;
-    appSettings.instructions = document.getElementById('cfgInstructions').value;
-
-    localStorage.setItem('ofoq_settings', JSON.stringify(appSettings));
-    applySettingsUI();
-    updatePreview();
-    showToast('تم حفظ الإعدادات بنجاح ✓');
-}
-
-function handleLogoUpload(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-        appSettings.logoBase64 = evt.target.result;
-        applySettingsUI();
-        updatePreview();
-        showToast('تم تحميل وتحديث الشعار بنجاح');
-    };
-    reader.readAsDataURL(file);
-}
-
-function showToast(message) {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.innerText = message;
-    container.appendChild(toast);
-    setTimeout(() => { toast.remove(); }, 3500);
-}
-
-function loadSampleDataIfEmpty() {
-    const existing = getStoredBookings();
-    if (existing.length === 0) {
-        const sampleBooking = {
-            id: 'OFOQ-784920',
-            tripType: 'round-trip',
-            status: 'مؤكد / CONFIRMED',
-            pnr: 'ABC123',
-            ticketNumber: '072-2401928301',
-            reference: 'OFOQ-784920',
-            bookingDate: '2026-08-25',
-            price: '125000',
-            currency: 'DZD',
-            checkedBaggage: '2x 23 kg',
-            cabinBaggage: '1x 8 kg',
-            notes: 'حقائب مسجلة شاملة',
-            passengers: [
-                { title: 'MR', name: 'MOHAMED ARKADAN', type: 'Adult', passport: 'A29384019', birthDate: '1995-05-12' }
-            ],
-            flights: [
-                {
-                    direction: 'outbound', airline: 'Turkish Airlines', flightNo: 'TK653', bookingClass: 'Economy (Y)',
-                    depAirport: 'ALG - Algiers', depCode: 'ALG', depDate: '2026-08-25', depTime: '18:00', depTerm: 'Terminal 1',
-                    arrAirport: 'IST - Istanbul', arrCode: 'IST', arrDate: '2026-08-26', arrTime: '00:15', seat: '14A'
-                }
-            ]
+    // Travel Request Form Submit
+    document.getElementById("travelRequestForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const reqId = "OFOQ-" + Math.floor(100000 + Math.random() * 900000);
+        const data = {
+            id: reqId,
+            date: new Date().toLocaleDateString(),
+            time: new Date().toLocaleTimeString(),
+            name: document.getElementById("custName").value,
+            phone: document.getElementById("custPhone").value,
+            whatsapp: document.getElementById("custWhatsapp").value || document.getElementById("custPhone").value,
+            email: document.getElementById("custEmail").value || "غير متوفر",
+            from: document.getElementById("custFrom").value,
+            to: document.getElementById("custTo").value,
+            tripType: document.getElementById("custTripType").value,
+            depDate: document.getElementById("custDepDate").value,
+            retDate: document.getElementById("custRetDate").value || "غير متاح (One Way)",
+            adults: document.getElementById("custAdults").value,
+            children: document.getElementById("custChildren").value,
+            infants: document.getElementById("custInfants").value,
+            transit: document.getElementById("custTransit").value,
+            cabin: document.getElementById("custCabin").value,
+            airlines: document.getElementById("custAirlines").value || "غير محدد",
+            baggage: document.getElementById("custBaggage").value || "حسب القياسات القياسية",
+            notes: document.getElementById("custNotes").value || "لا توجد ملاحظات",
+            status: "New"
         };
-        saveBookingToStorage(sampleBooking);
+
+        appState.requests.unshift(data);
+        saveState();
+
+        // Build WhatsApp Message
+        const waPhone = appState.settings.whatsapp.replace(/[^0-9]/g, "");
+        const waMsg = `*طلب رحلة جديد – أفق للطيران* %0a` +
+            `🔹 رقم الطلب: ${data.id}%0a` +
+            `👤 الاسم: ${data.name}%0a` +
+            `📞 الهاتف: ${data.phone}%0a` +
+            `✈️ من: ${data.from}%0a` +
+            `🛬 إلى: ${data.to}%0a` +
+            `📅 تاريخ الذهاب: ${data.depDate}%0a` +
+            `📅 تاريخ العودة: ${data.retDate}%0a` +
+            `🔄 نوع الرحلة: ${data.tripType}%0a` +
+            `👥 المسافرون: بالغين(${data.adults}) أطفال(${data.children}) رضع(${data.infants})%0a` +
+            `💺 الدرجة: ${data.cabin}%0a` +
+            `📋 ملاحظات: ${data.notes}`;
+
+        alert("تم حفظ طلبك بنجاح برقم: " + data.id + "\nسيتم الآن تحويلك إلى واتساب لإرسال الطلب.");
+        window.open(`https://wa.me/${waPhone}?text=${waMsg}`, "_blank");
+        document.getElementById("travelRequestForm").reset();
+    });
+
+    // Admin Modal triggers
+    document.getElementById("openAdminLoginBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        document.getElementById("adminLoginModal").style.display = "flex";
+    });
+    document.getElementById("closeLoginModal").addEventListener("click", () => {
+        document.getElementById("adminLoginModal").style.display = "none";
+    });
+
+    // Admin Login form
+    document.getElementById("adminLoginForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const u = document.getElementById("adminUser").value;
+        const p = document.getElementById("adminPass").value;
+        if (u === "admin" && p === appState.adminPass) {
+            document.getElementById("adminLoginModal").style.display = "none";
+            document.getElementById("adminDashboardContainer").style.display = "flex";
+            initAdminDashboard();
+        } else {
+            const err = document.getElementById("loginErrorMsg");
+            err.textContent = "اسم المستخدم أو كلمة المرور غير صحيحة!";
+            err.style.display = "block";
+        }
+    });
+
+    document.getElementById("closeAdminDashboard").addEventListener("click", () => {
+        document.getElementById("adminDashboardContainer").style.display = "none";
+        renderPublicWebsite();
+    });
+    document.getElementById("previewWebsiteBtn").addEventListener("click", () => {
+        document.getElementById("adminDashboardContainer").style.display = "none";
+        renderPublicWebsite();
+    });
+    document.getElementById("adminLogoutBtn").addEventListener("click", () => {
+        document.getElementById("adminDashboardContainer").style.display = "none";
+        renderPublicWebsite();
+    });
+
+    // Admin Tabs
+    document.querySelectorAll(".dash-tab-link").forEach(link => {
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+            document.querySelectorAll(".dash-tab-link").forEach(l => l.classList.remove("active"));
+            document.querySelectorAll(".dash-tab-content").forEach(c => c.classList.remove("active"));
+            link.classList.add("active");
+            const target = link.getAttribute("data-target");
+            document.getElementById(target).classList.add("active");
+        });
+    });
+
+    // Settings Forms & Add Actions in Admin
+    setupAdminForms();
+}
+
+// --- 6. ADMIN DASHBOARD LOGIC & FORMS ---
+function initAdminDashboard() {
+    // Update Stats
+    document.getElementById("statNewReq").textContent = appState.requests.filter(r => r.status === "New").length;
+    document.getElementById("statTotalReq").textContent = appState.requests.length;
+    document.getElementById("statServices").textContent = appState.services.length;
+    document.getElementById("statDest").textContent = appState.destinations.length;
+    document.getElementById("statOffers").textContent = appState.offers.length;
+    document.getElementById("statGallery").textContent = appState.gallery.length;
+    document.getElementById("reqBadgeCount").textContent = appState.requests.length;
+
+    // Load Settings Inputs
+    document.getElementById("setCompanyName").value = appState.settings.companyName;
+    document.getElementById("setWhatsapp").value = appState.settings.whatsapp;
+    document.getElementById("setEmail").value = appState.settings.email;
+    document.getElementById("setAddress").value = appState.settings.address;
+    document.getElementById("setFooterText").value = appState.settings.footerText;
+
+    // Load Hero Inputs
+    document.getElementById("heroSetTitle").value = appState.hero.title;
+    document.getElementById("heroSetDesc").value = appState.hero.desc;
+
+    // Load About Inputs
+    document.getElementById("aboutSetTitle").value = appState.about.title;
+    document.getElementById("aboutSetDesc").value = appState.about.desc;
+
+    renderAdminTables();
+}
+
+function renderAdminTables() {
+    // 1. Requests Table
+    const reqBody = document.getElementById("requestsTableBody");
+    reqBody.innerHTML = appState.requests.map((r, i) => `
+        <tr>
+            <td><strong>${r.id}</strong><br><small>${r.date}</small></td>
+            <td>${r.name}</td>
+            <td>${r.phone}</td>
+            <td>${r.from} ➔ ${r.to}</td>
+            <td>${r.depDate}</td>
+            <td><span class="badge">${r.status}</span></td>
+            <td>
+                <button class="btn btn-primary btn-sm" onclick="openWhatsAppRequest('${r.whatsapp}', '${r.id}')"><i class="fa-brands fa-whatsapp"></i></button>
+                <button class="btn btn-danger btn-sm" onclick="deleteRequest(${i})"><i class="fa-solid fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join("");
+
+    // 2. Services Table
+    const servBody = document.getElementById("adminServicesTableBody");
+    servBody.innerHTML = appState.services.map((s, i) => `
+        <tr>
+            <td>${s.title}</td>
+            <td>${s.desc}</td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteService(${i})"><i class="fa-solid fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join("");
+
+    // 3. Destinations Table
+    const destBody = document.getElementById("adminDestTableBody");
+    destBody.innerHTML = appState.destinations.map((d, i) => `
+        <tr>
+            <td><img src="${d.image}" width="60" style="border-radius:4px;"></td>
+            <td>${d.city}, ${d.country}</td>
+            <td>${d.desc}</td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteDestination(${i})"><i class="fa-solid fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join("");
+
+    // 4. Offers Table
+    const offerBody = document.getElementById("adminOffersTableBody");
+    offerBody.innerHTML = appState.offers.map((o, i) => `
+        <tr>
+            <td>${o.title}</td>
+            <td>${o.dest}</td>
+            <td>${o.price}</td>
+            <td>${o.startDate} إلى ${o.endDate}</td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteOffer(${i})"><i class="fa-solid fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join("");
+
+    // 5. Gallery Admin Grid
+    const galGrid = document.getElementById("adminGalleryGrid");
+    galGrid.innerHTML = appState.gallery.map((g, i) => `
+        <div class="gallery-admin-card">
+            <img src="${g.image}">
+            <p>${g.title}</p>
+            <button class="btn btn-danger btn-sm w-100 mt-2" onclick="deleteGallery(${i})">حذف</button>
+        </div>
+    `).join("");
+
+    // 6. FAQ Table
+    const faqBody = document.getElementById("adminFaqTableBody");
+    faqBody.innerHTML = appState.faq.map((f, i) => `
+        <tr>
+            <td>${f.q}</td>
+            <td>${f.a}</td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteFaq(${i})"><i class="fa-solid fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join("");
+}
+
+function setupAdminForms() {
+    // Company Settings Form Save
+    document.getElementById("companySettingsForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        appState.settings.companyName = document.getElementById("setCompanyName").value;
+        appState.settings.whatsapp = document.getElementById("setWhatsapp").value;
+        appState.settings.phone = document.getElementById("setWhatsapp").value;
+        appState.settings.email = document.getElementById("setEmail").value;
+        appState.settings.address = document.getElementById("setAddress").value;
+        appState.settings.footerText = document.getElementById("setFooterText").value;
+
+        const logoFile = document.getElementById("setLogoFile").files[0];
+        if (logoFile) {
+            await saveFileToIndexedDB("company_logo", logoFile);
+        }
+
+        saveState();
+        alert("تم حفظ إعدادات الشركة بنجاح!");
+        renderPublicWebsite();
+    });
+
+    // Hero Settings Form
+    document.getElementById("heroSettingsForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        appState.hero.title = document.getElementById("heroSetTitle").value;
+        appState.hero.desc = document.getElementById("heroSetDesc").value;
+
+        const heroImg = document.getElementById("heroSetImgFile").files[0];
+        if (heroImg) {
+            await saveFileToIndexedDB("hero_bg", heroImg);
+        }
+
+        saveState();
+        alert("تم تحديث واجهة الهيرو بنجاح!");
+        renderPublicWebsite();
+    });
+
+    // About Settings Form
+    document.getElementById("aboutSettingsForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        appState.about.title = document.getElementById("aboutSetTitle").value;
+        appState.about.desc = document.getElementById("aboutSetDesc").value;
+
+        const aboutImg = document.getElementById("aboutSetImgFile").files[0];
+        if (aboutImg) {
+            await saveFileToIndexedDB("about_img", aboutImg);
+        }
+
+        saveState();
+        alert("تم تحديث قسم من نحن بنجاح!");
+        renderPublicWebsite();
+    });
+
+    // Change Password Form
+    document.getElementById("changePasswordForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const curr = document.getElementById("currPassInput").value;
+        const nPass = document.getElementById("newPassInput").value;
+        const cPass = document.getElementById("confirmPassInput").value;
+
+        if (curr !== appState.adminPass) {
+            alert("كلمة المرور الحالية غير صحيحة!");
+            return;
+        }
+        if (nPass !== cPass) {
+            alert("كلمة المرور الجديدة غير متطابقة!");
+            return;
+        }
+        appState.adminPass = nPass;
+        saveState();
+        alert("تم تغيير كلمة المرور بنجاح!");
+        document.getElementById("changePasswordForm").reset();
+    });
+
+    // Add Service Button
+    document.getElementById("addNewServiceBtn").addEventListener("click", () => {
+        const title = prompt("أدخل عنوان الخدمة الجديدة:");
+        const desc = prompt("أدخل وصف الخدمة:");
+        if (title && desc) {
+            appState.services.push({ id: Date.now(), title, desc, icon: "fa-plane-departure" });
+            saveState();
+            initAdminDashboard();
+        }
+    });
+
+    // Add Destination Button
+    document.getElementById("addNewDestBtn").addEventListener("click", () => {
+        const country = prompt("أدخل اسم الدولة:");
+        const city = prompt("أدخل اسم المدينة:");
+        const desc = prompt("أدخل وصف الوجهة:");
+        const image = prompt("أدخل رابط صورة الوجهة:", "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80");
+        if (country && city) {
+            appState.destinations.push({ id: Date.now(), country, city, desc, image });
+            saveState();
+            initAdminDashboard();
+        }
+    });
+
+    // Add Offer Button
+    document.getElementById("addNewOfferBtn").addEventListener("click", () => {
+        const title = prompt("عنوان العرض:");
+        const dest = prompt("الوجهة:");
+        const price = prompt("السعر:");
+        const desc = prompt("الوصف:");
+        if (title && dest) {
+            appState.offers.push({ id: Date.now(), title, dest, price, desc, startDate: "2026-06-01", endDate: "2026-12-31", image: "https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?auto=format&fit=crop&w=800&q=80" });
+            saveState();
+            initAdminDashboard();
+        }
+    });
+
+    // Add Gallery Button
+    document.getElementById("addNewGalleryBtn").addEventListener("click", () => {
+        const title = prompt("عنوان الصورة:");
+        const image = prompt("رابط الصورة:");
+        if (title && image) {
+            appState.gallery.push({ id: Date.now(), title, image });
+            saveState();
+            initAdminDashboard();
+        }
+    });
+
+    // Add FAQ Button
+    document.getElementById("addNewFaqBtn").addEventListener("click", () => {
+        const q = prompt("السؤال:");
+        const a = prompt("الإجابة:");
+        if (q && a) {
+            appState.faq.push({ id: Date.now(), q, a });
+            saveState();
+            initAdminDashboard();
+        }
+    });
+
+    // Backup & Restore
+    document.getElementById("exportBackupBtn").addEventListener("click", () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+        const dlAnchor = document.createElement('a');
+        dlAnchor.setAttribute("href", dataStr);
+        dlAnchor.setAttribute("download", "ofoq_travel_backup.json");
+        document.body.appendChild(dlAnchor);
+        dlAnchor.click();
+        dlAnchor.remove();
+    });
+
+    document.getElementById("importBackupFile").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const imported = JSON.parse(event.target.result);
+                if (confirm("هل أنت متأكد من استعادة النسخة الاحتياطية واستبدال البيانات الحالية؟")) {
+                    appState = imported;
+                    saveState();
+                    alert("تمت استعادة البيانات بنجاح!");
+                    location.reload();
+                }
+            } catch (err) {
+                alert("ملف النسخة الاحتياطية غير صالح!");
+            }
+        };
+        reader.readAsText(file);
+    });
+}
+
+// Admin Deletion Functions
+function deleteRequest(index) {
+    if (confirm("هل تريد حذف هذا الطلب؟")) {
+        appState.requests.splice(index, 1);
+        saveState();
+        initAdminDashboard();
     }
+}
+function deleteService(index) {
+    appState.services.splice(index, 1);
+    saveState();
+    initAdminDashboard();
+}
+function deleteDestination(index) {
+    appState.destinations.splice(index, 1);
+    saveState();
+    initAdminDashboard();
+}
+function deleteOffer(index) {
+    appState.offers.splice(index, 1);
+    saveState();
+    initAdminDashboard();
+}
+function deleteGallery(index) {
+    appState.gallery.splice(index, 1);
+    saveState();
+    initAdminDashboard();
+}
+function deleteFaq(index) {
+    appState.faq.splice(index, 1);
+    saveState();
+    initAdminDashboard();
+}
+function openWhatsAppRequest(phone, id) {
+    const waPhone = phone.replace(/[^0-9]/g, "");
+    window.open(`https://wa.me/${waPhone}?text=مرحباً، بخصوص طلبكم رقم ${id}`, "_blank");
 }

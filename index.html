@@ -3,579 +3,703 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أفق للطيران | Ofoq Travel - نظام إدارة الحجوزات</title>
-    <!-- FontAwesome & Google Fonts -->
+    <title>أفق للطيران – Ofoq Travel | الموقع الرسمي</title>
+    <meta name="description" content="اكتشف العالم مع أفق للطيران. احجز رحلاتك، وتعرف على وجهاتنا وعروضنا الحصرية بكل راحة واحترافية.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- html2pdf CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Tesseract OCR CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- App Container -->
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="brand-box">
-                <div class="logo-container" id="sidebarLogoContainer">
-                    <i class="fa-solid fa-plane-departure brand-icon"></i>
-                </div>
-                <div class="brand-titles">
-                    <h2>أفق للطيران</h2>
-                    <span>OFOQ TRAVEL</span>
+    <div class="top-bar">
+        <div class="container top-bar-flex">
+            <div class="contact-info">
+                <a href="tel:+213564694878" id="topPhoneLink"><i class="fa-solid fa-phone"></i> <span id="topPhoneText">+213 564 694 878</span></a>
+                <a href="mailto:travelofoq@gmail.com" id="topEmailLink"><i class="fa-solid fa-envelope"></i> <span id="topEmailText">travelofoq@gmail.com</span></a>
+            </div>
+            <div class="top-bar-right">
+                <div class="social-links" id="topSocialContainer">
+                    </div>
+                <div class="lang-switcher">
+                    <select id="langSelector">
+                        <option value="ar">العربية</option>
+                        <option value="en">English</option>
+                        <option value="fr">Français</option>
+                    </select>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <nav class="nav-menu">
-                <button class="nav-btn active" onclick="switchTab('dashboard')">
-                    <i class="fa-solid fa-chart-pie"></i> الرئيسية Dashboard
-                </button>
-                <button class="nav-btn" onclick="switchTab('new-booking')">
-                    <i class="fa-solid fa-circle-plus"></i> بدء عمل جديد New Booking
-                </button>
-                <button class="nav-btn" onclick="switchTab('history')">
-                    <i class="fa-solid fa-clock-rotate-left"></i> السجل Booking History
-                </button>
-                <button class="nav-btn" onclick="switchTab('airlines')">
-                    <i class="fa-solid fa-plane"></i> شركات الطيران Airlines
-                </button>
-                <button class="nav-btn" onclick="switchTab('settings')">
-                    <i class="fa-solid fa-sliders"></i> الإعدادات Settings
-                </button>
+    <header class="navbar-header" id="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo-brand">
+                <img id="siteLogoImg" src="" alt="Ofoq Travel Logo" style="display:none;">
+                <div id="defaultLogoText" class="logo-text">
+                    <span class="logo-title">أفق للطيران</span>
+                    <span class="logo-sub">OFOQ TRAVEL</span>
+                </div>
+            </a>
+            <nav class="nav-menu" id="navMenu">
+                <ul>
+                    <li><a href="#hero" data-i18n="nav_home">الرئيسية</a></li>
+                    <li><a href="#about" data-i18n="nav_about">من نحن</a></li>
+                    <li><a href="#services" data-i18n="nav_services">خدماتنا</a></li>
+                    <li><a href="#destinations" data-i18n="nav_destinations">وجهاتنا</a></li>
+                    <li><a href="#offers" data-i18n="nav_offers">عروضنا</a></li>
+                    <li><a href="#gallery" data-i18n="nav_gallery">المعرض</a></li>
+                    <li><a href="#contact" data-i18n="nav_contact">احجز رحلتك</a></li>
+                    <li><a href="#" id="openAdminLoginBtn" class="admin-link-btn"><i class="fa-solid fa-lock"></i> <span data-i18n="nav_admin">الأدمن</span></a></li>
+                </ul>
             </nav>
-
-            <div class="sidebar-footer">
-                <p>Ofoq Travel System v2.0</p>
-                <small>نسخة الأعمال الاحترافية</small>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
-        </aside>
+        </div>
+    </header>
 
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <!-- Header Bar -->
-            <header class="top-header">
-                <div class="header-title">
-                    <h1 id="pageTitle">لوحة التحكم الرئيسيّة</h1>
+    <main id="publicWebsiteContent">
+
+        <section id="hero" class="hero-section">
+            <div class="hero-bg-media" id="heroBgMedia">
                 </div>
-                <div class="header-actions">
-                    <button class="btn btn-secondary btn-sm" onclick="quickImportModal()">
-                        <i class="fa-solid fa-file-import"></i> استيراد نص/مستند OCR
-                    </button>
-                    <button class="btn btn-gold btn-sm" onclick="createNewBooking()">
-                        <i class="fa-solid fa-plus"></i> حجز جديد
-                    </button>
+            <div class="hero-overlay"></div>
+            <div class="container hero-content text-center">
+                <h1 id="heroTitle" data-i18n="hero_title">اكتشف العالم مع أفق للطيران</h1>
+                <p id="heroDesc" data-i18n="hero_desc">نجعل رحلتك تجربة فاخرة وآمنة إلى أرقى الوجهات العالمية بأسعار تنافسية وخدمة استثنائية.</p>
+                <div class="hero-buttons">
+                    <a href="#services" class="btn btn-primary" id="heroBtn1Text" data-i18n="hero_btn1">اكتشف خدماتنا</a>
+                    <a href="#contact" class="btn btn-outline" id="heroBtn2Text" data-i18n="hero_btn2">اطلب رحلتك</a>
                 </div>
+            </div>
+        </section>
+
+        <section id="promoBannerSection" class="promo-banner-section" style="display:none;">
+            <div class="container">
+                <div class="promo-card" id="featuredPromoCard">
+                    </div>
+            </div>
+        </section>
+
+        <section id="about" class="about-section section-padding">
+            <div class="container grid-2">
+                <div class="about-img-box">
+                    <img id="aboutImage" src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&q=80" alt="About Ofoq">
+                </div>
+                <div class="about-text-box">
+                    <span class="section-tag" data-i18n="about_tag">من نحن</span>
+                    <h2 id="aboutTitle" data-i18n="about_title">بوابتك الموثوقة للسفر الفاخر والآمن</h2>
+                    <p id="aboutDesc" data-i18n="about_desc">شركة أفق للطيران هي شريكك الأمثل لتنظيم الرحلات وحجز تذاكر الطيران والفنادق بأعلى معايير الاحترافية والمرونة. نضع راحة العميل وتفاصيل رحلته في قمة أولوياتنا لضمان تجربة لا تُنسى.</p>
+                    <div class="about-features">
+                        <div class="feature-item"><i class="fa-solid fa-shield-halved"></i> <span data-i18n="feat_1">حجوزات آمنة ومضمونة</span></div>
+                        <div class="feature-item"><i class="fa-solid fa-headset"></i> <span data-i18n="feat_2">دعم عملاء مستمر 24/7</span></div>
+                        <div class="feature-item"><i class="fa-solid fa-star"></i> <span data-i18n="feat_3">خدمات سياحية فاخرة</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="services-section section-padding bg-light">
+            <div class="container text-center">
+                <span class="section-tag" data-i18n="serv_tag">خدماتنا الاحترافية</span>
+                <h2 data-i18n="serv_title">ما نقدمه لراحة سفرك</h2>
+                <div class="services-grid" id="servicesGrid">
+                    </div>
+            </div>
+        </section>
+
+        <section id="destinations" class="destinations-section section-padding">
+            <div class="container">
+                <div class="section-header text-center">
+                    <span class="section-tag" data-i18n="dest_tag">وجهات السفر</span>
+                    <h2 data-i18n="dest_title">استكشف أبرز وجهاتنا العالمية</h2>
+                </div>
+                <div class="destinations-grid" id="destinationsGrid">
+                    </div>
+            </div>
+        </section>
+
+        <section id="offers" class="offers-section section-padding bg-light">
+            <div class="container">
+                <div class="section-header text-center">
+                    <span class="section-tag" data-i18n="offer_tag">عروض السفر</span>
+                    <h2 data-i18n="offer_title">عروضنا الخاصة والمميزة</h2>
+                </div>
+                <div class="offers-grid" id="offersGrid">
+                    </div>
+            </div>
+        </section>
+
+        <section id="whyOfoq" class="why-section section-padding">
+            <div class="container">
+                <div class="section-header text-center">
+                    <span class="section-tag" data-i18n="why_tag">لماذا تختارنا</span>
+                    <h2 data-i18n="why_title">لماذا أفق للطيران؟</h2>
+                </div>
+                <div class="why-grid">
+                    <div class="why-card">
+                        <i class="fa-solid fa-award"></i>
+                        <h3 data-i18n="why_1_t">الاحترافية العالية</h3>
+                        <p data-i18n="why_1_d">فريق مختص لإدارة كافة تفاصيل رحلتك بدقة متناهية.</p>
+                    </div>
+                    <div class="why-card">
+                        <i class="fa-solid fa-handshake"></i>
+                        <h3 data-i18n="why_2_t">ثقة وموثوقية</h3>
+                        <p data-i18n="why_2_d">شفافية كاملة في الأسعار والخدمات المقدمة بدون رسوم خفية.</p>
+                    </div>
+                    <div class="why-card">
+                        <i class="fa-solid fa-bolt"></i>
+                        <h3 data-i18n="why_3_t">سرعة الاستجابة</h3>
+                        <p data-i18n="why_3_d">معالجة فورية للطلبات والتواصل السريع عبر واتساب.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="timeline" class="timeline-section section-padding bg-light">
+            <div class="container text-center">
+                <span class="section-tag" data-i18n="time_tag">خطوات بسيطة</span>
+                <h2 data-i18n="time_title">رحلة العميل معنا</h2>
+                <div class="timeline-container">
+                    <div class="timeline-step">
+                        <div class="step-num">01</div>
+                        <h4 data-i18n="t_1">اختر وجهتك</h4>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-num">02</div>
+                        <h4 data-i18n="t_2">أرسل طلبك</h4>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-num">03</div>
+                        <h4 data-i18n="t_3">نتواصل معك</h4>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-num">04</div>
+                        <h4 data-i18n="t_4">نرتب رحلتك</h4>
+                    </div>
+                    <div class="timeline-step">
+                        <div class="step-num">05</div>
+                        <h4 data-i18n="t_5">استمتع برحلتك</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery" class="gallery-section section-padding">
+            <div class="container">
+                <div class="section-header text-center">
+                    <span class="section-tag" data-i18n="gal_tag">معرض الصور</span>
+                    <h2 data-i18n="gal_title">اكتشف عالم أفق</h2>
+                </div>
+                <div class="gallery-grid" id="galleryGrid">
+                    </div>
+            </div>
+        </section>
+
+        <section id="videos" class="video-section section-padding bg-light">
+            <div class="container text-center">
+                <span class="section-tag" data-i18n="vid_tag">عالم الطيران</span>
+                <h2 data-i18n="vid_title">السفر يبدأ من هنا</h2>
+                <div class="videos-grid" id="videosGrid">
+                    </div>
+            </div>
+        </section>
+
+        <section id="faq" class="faq-section section-padding">
+            <div class="container">
+                <div class="section-header text-center">
+                    <span class="section-tag" data-i18n="faq_tag">الأسئلة الشائعة</span>
+                    <h2 data-i18n="faq_title">كل ما ترغب في معرفته</h2>
+                </div>
+                <div class="faq-accordion" id="faqAccordion">
+                    </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section section-padding bg-light">
+            <div class="container">
+                <div class="section-header text-center">
+                    <span class="section-tag" data-i18n="form_tag">حجز فوري</span>
+                    <h2 data-i18n="form_title">خطط لرحلتك مع أفق</h2>
+                    <p data-i18n="form_desc">أملأ النموذج أدناه وسيقوم النظام بتجهيز طلبك وفتحه مباشرة عبر واتساب لتأكيده.</p>
+                </div>
+                <form id="travelRequestForm" class="travel-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-i18n="lbl_name">الاسم الكريم *</label>
+                            <input type="text" id="custName" required placeholder="أدخل اسمك الكامل">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="lbl_phone">رقم الهاتف *</label>
+                            <input type="tel" id="custPhone" required placeholder="+213...">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="lbl_whatsapp">رقم الواتساب (اختياري)</label>
+                            <input type="tel" id="custWhatsapp" placeholder="رقم الواتساب">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="lbl_email">البريد الإلكتروني (اختياري)</label>
+                            <input type="email" id="custEmail" placeholder="example@mail.com">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="lbl_from">من (مدينة / مطار المغادرة) *</label>
+                            <input type="text" id="custFrom" required placeholder="مثال: الجزائر (ALG)">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="lbl_to">إلى (مدينة / مطار الوصول) *</label>
+                            <input type="text" id="custTo" required placeholder="مثال: دبي (DXB)">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="lbl_trip_type">نوع الرحلة</label>
+                            <select id="custTripType">
+                                <option value="One Way">ذهاب فقط (One Way)</option>
+                                <option value="Round Trip" selected>ذهاب وعودة (Round Trip)</option>
+                                <option value="Multi City">مدن متعددة (Multi City)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="lbl_dep_date">تاريخ الذهاب *</label>
+                            <input type="date" id="custDepDate" required>
+                        </div>
+                        <div class="form-group" id="returnDateGroup">
+                            <label data-i18n="lbl_ret_date">تاريخ العودة</label>
+                            <input type="date" id="custRetDate">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="lbl_adults">البالغون (Adults)</label>
+                            <input type="number" id="custAdults" value="1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="lbl_children">الأطفال (Children)</label>
+                            <input type="number" id="custChildren" value="0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="lbl_infants">الرضع (Infants)</label>
+                            <input type="number" id="custInfants" value="0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="lbl_transit">هل تمانع رحلات الترانزيت؟</label>
+                            <select id="custTransit">
+                                <option value="أفضل رحلة مباشرة">أفضل رحلة مباشرة</option>
+                                <option value="لا أمانع الترانزيت">لا أمانع الترانزيت</option>
+                                <option value="لا يهم">لا يهم</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="lbl_cabin">درجة السفر</label>
+                            <select id="custCabin">
+                                <option value="Economy">الدرجة السياحية (Economy)</option>
+                                <option value="Premium Economy">السياحية الممتازة (Premium Economy)</option>
+                                <option value="Business">درجة رجال الأعمال (Business)</option>
+                                <option value="First">الدرجة الأولى (First)</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-span">
+                            <label data-i18n="lbl_airlines">شركات الطيران المفضلة (اختياري)</label>
+                            <input type="text" id="custAirlines" placeholder="مثال: الخطوط السعودية، القطرية...">
+                        </div>
+                        <div class="form-group full-span">
+                            <label data-i18n="lbl_baggage">الأمتعة والأحقاد الإضافية</label>
+                            <input type="text" id="custBaggage" placeholder="مثال: حقيبة 23كغ إضافية">
+                        </div>
+                        <div class="form-group full-span">
+                            <label data-i18n="lbl_notes">ملاحظات أو طلبات خاصة</label>
+                            <textarea id="custNotes" rows="3" placeholder="أي تفاصيل إضافية تود إخبارنا بها..."></textarea>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button type="submit" class="btn btn-primary btn-lg"><i class="fa-brands fa-whatsapp"></i> <span data-i18n="btn_send_wa">إرسال الطلب عبر واتساب</span></button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <h3 id="footerCompanyName">أفق للطيران – Ofoq Travel</h3>
+                <p id="footerCompanyText" data-i18n="footer_desc">رفيقكم الأمثل لسفر فاخر وآمن إلى كافة أنحاء العالم بكل سهولة واحترافية.</p>
+                <div class="footer-social" id="footerSocialContainer"></div>
+            </div>
+            <div class="footer-col">
+                <h4 data-i18n="footer_links">روابط سريعة</h4>
+                <ul>
+                    <li><a href="#hero" data-i18n="nav_home">الرئيسية</a></li>
+                    <li><a href="#about" data-i18n="nav_about">من نحن</a></li>
+                    <li><a href="#services" data-i18n="nav_services">خدماتنا</a></li>
+                    <li><a href="#destinations" data-i18n="nav_destinations">وجهاتنا</a></li>
+                    <li><a href="#offers" data-i18n="nav_offers">عروضنا</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 data-i18n="footer_contact">تواصل معنا</h4>
+                <p><i class="fa-solid fa-phone"></i> <span id="footerPhone">+213 564 694 878</span></p>
+                <p><i class="fa-solid fa-envelope"></i> <span id="footerEmail">travelofoq@gmail.com</span></p>
+                <p><i class="fa-solid fa-location-dot"></i> <span id="footerAddress">الجزائر العاصمة، الجزائر</span></p>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <p>&copy; <span id="currentYear"></span> <span id="footerCopyName">أفق للطيران – Ofoq Travel</span>. <span data-i18n="rights">جميع الحقوق محفوظة.</span></p>
+        </div>
+    </footer>
+
+    <div id="adminLoginModal" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-lock"></i> دخول لوحة التحكم (الأدمن)</h3>
+                <button class="close-modal-btn" id="closeLoginModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="adminLoginForm">
+                    <div class="form-group">
+                        <label>اسم المستخدم (Username)</label>
+                        <input type="text" id="adminUser" required value="admin">
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة المرور (Password)</label>
+                        <input type="password" id="adminPass" required value="admin123">
+                    </div>
+                    <p class="text-danger" id="loginErrorMsg" style="display:none;"></p>
+                    <button type="submit" class="btn btn-primary w-100 mt-2">تسجيل الدخول</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminDashboardContainer" class="admin-dashboard-wrapper" style="display:none;">
+        <div class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <h2>أفق الأدمن</h2>
+                <button id="closeAdminDashboard" class="btn-close-dash"><i class="fa-solid fa-arrow-right"></i> عرض الموقع</button>
+            </div>
+            <ul class="admin-menu">
+                <li><a href="#" class="dash-tab-link active" data-target="tabOverview"><i class="fa-solid fa-chart-pie"></i> نظرة عامة</a></li>
+                <li><a href="#" class="dash-tab-link" data-target="tabRequests"><i class="fa-solid fa-list-check"></i> طلبات السفر (<span id="reqBadgeCount">0</span>)</a></li>
+                <li><a href="#" class="dash-tab-link" data-target="tabSettings"><i class="fa-solid fa-gear"></i> إعدادات الشركة</a></li>
+                <li><a href="#" class="dash-tab-link" data-target="tabHero"><i class="fa-solid fa-image"></i> إدارة الهيرو (Hero)</a></li>
+                <li><a href="#" class="dash-tab-link" data-target="tabAboutAdmin"><i class="fa-solid fa-address-card"></i> إدارة من نحن</a></li>
+                <li><a href="#" class="dash-tab-link" data-target="tabServices"><i class="fa-solid fa-concierge-bell"></i> إدارة الخدمات</a></li>
+                <li><a href="#" class="dash-tab-link" data-target="tabDestinations"><i class="fa-solid fa-map-location-dot"></i> إدارة الوجهات</a></li>
+                <li><a href="#" class="dash-tab-link" data-target="tabOffers"><i class="fa-solid fa-tags"></i> إدارة العروض</a></li>
+                <li><a href="#" class="dash-tab-link" data-target="tabPromoOffers"><i class="fa-solid fa-bullhorn"></i> العروض الترويجية</a></li>
+                <li><a href="#" class="dash-tab-link" data-target="tabGallery"><i class="fa-solid fa-images"></i> المعرض</a></li>
+                <li><a href="#" class="dash-tab-link" data-target="tabVideos"><i class="fa-solid fa-video"></i> الفيديوهات</a></li>
+                <li><a href="#" class="dash-tab-link" data-target="tabFaq"><i class="fa-solid fa-question-circle"></i> الأسئلة الشائعة</a></li>
+                <li><a href="#" class="dash-tab-link" data-target="tabSecurity"><i class="fa-solid fa-shield-keyhole"></i> الأمان وتغيير الباسورد</a></li>
+                <li><a href="#" class="dash-tab-link" data-target="tabBackup"><i class="fa-solid fa-database"></i> النسخ الاحتياطي</a></li>
+            </ul>
+            <div class="admin-sidebar-footer">
+                <button id="adminLogoutBtn" class="btn btn-danger w-100"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</button>
+            </div>
+        </div>
+        <div class="admin-main-content">
+            <header class="admin-topbar">
+                <h3>لوحة التحكم الإدارية — أفق للطيران</h3>
+                <button id="previewWebsiteBtn" class="btn btn-outline btn-sm"><i class="fa-solid fa-eye"></i> معاينة الموقع</button>
             </header>
-
-            <!-- Mobile View Switcher Tab -->
-            <div class="mobile-tab-bar">
-                <button class="m-tab active" id="btnFormTab" onclick="switchMobileTab('form')"><i class="fa-solid fa-pen-to-square"></i> نموذج البيانات</button>
-                <button class="m-tab" id="btnPreviewTab" onclick="switchMobileTab('preview')"><i class="fa-solid fa-eye"></i> معاينة التذكرة</button>
-            </div>
-
-            <!-- Page 1: Dashboard View -->
-            <section id="view-dashboard" class="page-view active">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon icon-blue"><i class="fa-solid fa-ticket"></i></div>
-                        <div class="stat-details">
-                            <h3>إجمالي الحجوزات</h3>
-                            <span class="stat-num" id="statTotal">0</span>
+            <div class="admin-body">
+                
+                <div class="dash-tab-content active" id="tabOverview">
+                    <h2>إحصائيات النظام</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3 id="statNewReq">0</h3>
+                            <p>طلبات جديدة</p>
                         </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon icon-green"><i class="fa-solid fa-circle-check"></i></div>
-                        <div class="stat-details">
-                            <h3>حجوزات مؤكدة</h3>
-                            <span class="stat-num" id="statConfirmed">0</span>
+                        <div class="stat-card">
+                            <h3 id="statTotalReq">0</h3>
+                            <p>إجمالي الطلبات</p>
                         </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon icon-gold"><i class="fa-solid fa-hourglass-half"></i></div>
-                        <div class="stat-details">
-                            <h3>تحت الحجز</h3>
-                            <span class="stat-num" id="statPending">0</span>
+                        <div class="stat-card">
+                            <h3 id="statServices">0</h3>
+                            <p>الخدمات المتاحة</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="statDest">0</h3>
+                            <p>الوجهات السياحية</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="statOffers">0</h3>
+                            <p>عروض السفر</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="statGallery">0</h3>
+                            <p>صور المعرض</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="dashboard-content-box">
-                    <div class="box-header">
-                        <h3><i class="fa-solid fa-clock-history"></i> أحدث الحجوزات</h3>
-                        <button class="btn btn-outline btn-sm" onclick="switchTab('history')">عرض الكل</button>
+                <div class="dash-tab-content" id="tabRequests">
+                    <h2>طلبات العملاء</h2>
+                    <div class="table-responsive">
+                        <table class="admin-table" id="requestsTable">
+                            <thead>
+                               <tr>
+                                   <th>ID / التاريخ</th>
+                                   <th>العميل</th>
+                                   <th>الهاتف</th>
+                                   <th>المسار</th>
+                                   <th>التاريخ</th>
+                                   <th>الحالة</th>
+                                   <th>الإجراءات</th>
+                               </tr>
+                            </thead>
+                            <tbody id="requestsTableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="dash-tab-content" id="tabSettings">
+                    <h2>إعدادات الشركة والشعار</h2>
+                    <form id="companySettingsForm" class="admin-form">
+                        <div class="form-group">
+                            <label>اسم الشركة</label>
+                            <input type="text" id="setCompanyName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>شعار الشركة (رفع ملف صورة محلياً)</label>
+                            <input type="file" id="setLogoFile" accept="image/*">
+                            <div class="mt-2" id="logoPreviewContainer">
+                                </div>
+                        </div>
+                        <div class="form-group">
+                            <label>رقم الهاتف / واتساب الافتراضي</label>
+                            <input type="text" id="setWhatsapp" required>
+                        </div>
+                        <div class="form-group">
+                            <label>البريد الإلكتروني</label>
+                            <input type="email" id="setEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>العنوان</label>
+                            <input type="text" id="setAddress" required>
+                        </div>
+                        <div class="form-group">
+                            <label>نص حقوق النشر (Footer)</label>
+                            <input type="text" id="setFooterText">
+                        </div>
+                        <button type="submit" class="btn btn-primary">حفظ الإعدادات</button>
+                    </form>
+                </div>
+
+                <div class="dash-tab-content" id="tabHero">
+                    <h2>إدارة واجهة الهيرو (Hero)</h2>
+                    <form id="heroSettingsForm" class="admin-form">
+                        <div class="form-group">
+                            <label>العنوان الرئيسي</label>
+                            <input type="text" id="heroSetTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label>الوصف</label>
+                            <textarea id="heroSetDesc" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>صورة الخلفية (رفع صورة)</label>
+                            <input type="file" id="heroSetImgFile" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary">حفظ تعديلات الهيرو</button>
+                    </form>
+                </div>
+
+                <div class="dash-tab-content" id="tabAboutAdmin">
+                    <h2>إدارة قسم من نحن</h2>
+                    <form id="aboutSettingsForm" class="admin-form">
+                        <div class="form-group">
+                            <label>العنوان</label>
+                            <input type="text" id="aboutSetTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label>النص التفصيلي</label>
+                            <textarea id="aboutSetDesc" rows="5" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>صورة قسم من نحن</label>
+                            <input type="file" id="aboutSetImgFile" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary">حفظ تعديلات من نحن</button>
+                    </form>
+                </div>
+
+                <div class="dash-tab-content" id="tabServices">
+                    <div class="d-flex justify-between align-center mb-3">
+                        <h2>إدارة الخدمات</h2>
+                        <button class="btn btn-primary btn-sm" id="addNewServiceBtn"><i class="fa-solid fa-plus"></i> إضافة خدمة جديدة</button>
                     </div>
                     <div class="table-responsive">
-                        <table class="data-table">
+                        <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>PNR</th>
-                                    <th>المسافر الرئيسي</th>
-                                    <th>خط السير</th>
-                                    <th>تاريخ المغادرة</th>
-                                    <th>الحالة</th>
-                                    <th>إجراءات</th>
+                                    <th>العنوان</th>
+                                    <th>الوصف</th>
+                                    <th>الإجراءات</th>
                                 </tr>
                             </thead>
-                            <tbody id="dashRecentBookings">
-                                <!-- Dynamic Render -->
-                            </tbody>
+                            <tbody id="adminServicesTableBody"></tbody>
                         </table>
                     </div>
                 </div>
-            </section>
 
-            <!-- Page 2: New Booking / Editor Workspace -->
-            <section id="view-new-booking" class="page-view">
-                <div class="workspace-grid">
-                    <!-- Form Side -->
-                    <div class="form-container pane-mobile-active" id="paneForm">
-                        <div class="action-toolbar">
-                            <button class="btn btn-success" onclick="saveCurrentBooking()"><i class="fa-solid fa-floppy-disk"></i> حفظ الحجز</button>
-                            <button class="btn btn-gold" onclick="triggerPDFExport()"><i class="fa-solid fa-file-pdf"></i> تصدير PDF</button>
-                            <button class="btn btn-outline" onclick="window.print()"><i class="fa-solid fa-print"></i> طباعة</button>
-                            <button class="btn btn-danger btn-sm" onclick="resetForm()"><i class="fa-solid fa-rotate-left"></i> إفراغ</button>
-                        </div>
-
-                        <!-- 1. General Info Card -->
-                        <div class="form-card">
-                            <div class="card-title"><i class="fa-solid fa-circle-info"></i> معلومات الحجز الأساسية</div>
-                            <div class="form-row flex-3">
-                                <div class="form-group">
-                                    <label>نوع الرحلة العام</label>
-                                    <select id="tripType" onchange="handleTripTypeChange(); updatePreview();">
-                                        <option value="one-way">ذهاب فقط (One-Way)</option>
-                                        <option value="round-trip">ذهاب وعودة (Round-Trip)</option>
-                                        <option value="multi-city">متعددة المدن (Multi-City)</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>حالة الحجز</label>
-                                    <select id="bookingStatus" onchange="updatePreview()">
-                                        <option value="مؤكد / CONFIRMED">مؤكد (Confirmed)</option>
-                                        <option value="تحت الحجز / HOLD">تحت الحجز (On Hold)</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>رمز PNR</label>
-                                    <input type="text" id="pnrCode" placeholder="مثال: ABC123" oninput="updatePreview()" class="font-mono bold upper">
-                                </div>
-                            </div>
-                            <div class="form-row flex-3">
-                                <div class="form-group">
-                                    <label>رقم التذكرة الإلكترونية Ticket No.</label>
-                                    <input type="text" id="ticketNumber" placeholder="مثال: 072-2401928301" oninput="updatePreview()">
-                                </div>
-                                <div class="form-group">
-                                    <label>رقم الحجز Booking ID</label>
-                                    <input type="text" id="bookingReference" placeholder="اختر رقم مرجعي" oninput="updatePreview()">
-                                </div>
-                                <div class="form-group">
-                                    <label>تاريخ الحجز</label>
-                                    <input type="date" id="bookingDate" onchange="updatePreview()">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 2. Passengers Card -->
-                        <div class="form-card">
-                            <div class="card-title-action">
-                                <span class="card-title"><i class="fa-solid fa-users"></i> بيانات المسافرين</span>
-                                <button class="btn btn-sm btn-outline" onclick="addPassengerInput()"><i class="fa-solid fa-user-plus"></i> إضافة مسافر</button>
-                            </div>
-                            <div id="passengersList">
-                                <!-- Dynamic Passengers Fields -->
-                            </div>
-                        </div>
-
-                        <!-- 3. Flights Itinerary Card -->
-                        <div class="form-card">
-                            <div class="card-title-action">
-                                <span class="card-title"><i class="fa-solid fa-plane-flight"></i> خط سير الرحلات (Itinerary)</span>
-                                <button class="btn btn-sm btn-outline" onclick="addFlightInput()"><i class="fa-solid fa-plus"></i> إضافة رحلة</button>
-                            </div>
-                            <div id="flightsList">
-                                <!-- Dynamic Flights Fields -->
-                            </div>
-                        </div>
-
-                        <!-- 4. Pricing & Luggage Section -->
-                        <div class="form-card">
-                            <div class="card-title"><i class="fa-solid fa-receipt"></i> السعر والأمتعة</div>
-                            <div class="form-row flex-3">
-                                <div class="form-group">
-                                    <label>السعر الإجمالي Total Price</label>
-                                    <input type="number" id="fareAmount" placeholder="مثال: 125000" oninput="updatePreview()">
-                                </div>
-                                <div class="form-group">
-                                    <label>العملة Currency</label>
-                                    <select id="fareCurrency" onchange="updatePreview()">
-                                        <option value="DZD">DZD - دينار جزائري</option>
-                                        <option value="SAR">SAR - ريال سعودي</option>
-                                        <option value="EUR">EUR - يورو</option>
-                                        <option value="USD">USD - دولار أمريكي</option>
-                                        <option value="AED">AED - درهم إماراتي</option>
-                                        <option value="GBP">GBP - جنيه استرليني</option>
-                                        <option value="TRY">TRY - ليرة تركية</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>الأمتعة المسجلة (Baggage)</label>
-                                    <input type="text" id="checkedBaggage" placeholder="مثال: 2x 23 kg" oninput="updatePreview()">
-                                </div>
-                            </div>
-                            <div class="form-row flex-2">
-                                <div class="form-group">
-                                    <label>حقيبة اليد (Cabin Bag)</label>
-                                    <input type="text" id="cabinBaggage" placeholder="مثال: 1x 8 kg" oninput="updatePreview()">
-                                </div>
-                                <div class="form-group">
-                                    <label>ملاحظات إضافية</label>
-                                    <input type="text" id="bookingNotes" placeholder="أي ملاحظات تظهر في برنامج السفر" oninput="updatePreview()">
-                                </div>
-                            </div>
-                        </div>
+                <div class="dash-tab-content" id="tabDestinations">
+                    <div class="d-flex justify-between align-center mb-3">
+                        <h2>إدارة الوجهات السياحية</h2>
+                        <button class="btn btn-primary btn-sm" id="addNewDestBtn"><i class="fa-solid fa-plus"></i> إضافة وجهة جديدة</button>
                     </div>
-
-                    <!-- Live Document Preview Side -->
-                    <div class="preview-container" id="panePreview">
-                        <div class="preview-toolbar">
-                            <span class="preview-badge"><i class="fa-solid fa-eye"></i> معاينة حيّة تدمج الهوية</span>
-                            <div class="pdf-lang-selector">
-                                <label><i class="fa-solid fa-language"></i> لغة المستند/PDF:</label>
-                                <select id="pdfLanguage" onchange="updatePreview()">
-                                    <option value="en" selected>English (إنجليزي)</option>
-                                    <option value="fr">Français (فرنسي)</option>
-                                    <option value="ar">العربية (Arabic)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Document Sheet Printable Area -->
-                        <div id="printSheet" class="document-sheet">
-                            <!-- Top Decorative Bar -->
-                            <div class="doc-accent-bar"></div>
-
-                            <!-- Header Section -->
-                            <div class="doc-header">
-                                <div class="doc-logo-block">
-                                    <div id="docLogoDynamic" class="doc-logo-render"></div>
-                                    <div class="doc-brand-names">
-                                        <h1 id="docAgencyName">أفق للطيران</h1>
-                                        <span id="docAgencySubName">OFOQ TRAVEL</span>
-                                    </div>
-                                </div>
-                                <div class="doc-company-details">
-                                    <div class="doc-info-item" id="renderPhone"><i class="fa-solid fa-phone"></i> <span>+213 550 00 00 00</span></div>
-                                    <div class="doc-info-item" id="renderEmail"><i class="fa-solid fa-envelope"></i> <span>contact@ofoqtravel.com</span></div>
-                                    <div class="doc-info-item" id="renderAddress"><i class="fa-solid fa-location-dot"></i> <span>الجزائر / الرياض</span></div>
-                                </div>
-                            </div>
-
-                            <div class="doc-divider"></div>
-
-                            <!-- Document Meta Details (PNR, Status, Ref) -->
-                            <div class="doc-meta-banner">
-                                <div class="meta-box">
-                                    <span class="meta-label" id="lblPNR">BOOKING REFERENCE (PNR)</span>
-                                    <span class="meta-val pnr-highlight" id="docPNR">------</span>
-                                </div>
-                                <div class="meta-box">
-                                    <span class="meta-label" id="lblStatus">BOOKING STATUS</span>
-                                    <span class="meta-val status-badge-doc" id="docStatus">CONFIRMED</span>
-                                </div>
-                                <div class="meta-box" id="boxTicketNo">
-                                    <span class="meta-label" id="lblTicketNo">TICKET NUMBER</span>
-                                    <span class="meta-val" id="docTicketNo">------</span>
-                                </div>
-                                <div class="meta-box" id="boxIssueDate">
-                                    <span class="meta-label" id="lblIssueDate">DATE OF ISSUE</span>
-                                    <span class="meta-val" id="docIssueDate">------</span>
-                                </div>
-                            </div>
-
-                            <!-- Passengers List Render -->
-                            <div class="doc-section" id="docPassengersSection">
-                                <div class="doc-section-title" id="secTitlePassengers"><i class="fa-solid fa-users"></i> PASSENGER DETAILS</div>
-                                <table class="doc-table">
-                                    <thead>
-                                        <tr>
-                                            <th id="thPassName">PASSENGER NAME</th>
-                                            <th id="thPassType">TYPE</th>
-                                            <th id="thPassport">PASSPORT NO.</th>
-                                            <th id="thBirthDate">DATE OF BIRTH</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="docPassengersBody">
-                                        <!-- Dynamic Passengers Table Rows -->
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- Flights & Transits Cards Render -->
-                            <div class="doc-section">
-                                <div class="doc-section-title" id="secTitleFlightItinerary"><i class="fa-solid fa-plane"></i> FLIGHT ITINERARY</div>
-                                <div id="docFlightsContainer">
-                                    <!-- Dynamic Flight Cards Render -->
-                                </div>
-                            </div>
-
-                            <!-- Baggage Info Render Section -->
-                            <div class="doc-section" id="docBaggageSection">
-                                <div class="doc-section-title"><i class="fa-solid fa-suitcase-rolling"></i> BAGGAGE ALLOWANCE</div>
-                                <div class="doc-summary-card">
-                                    <div class="summary-col">
-                                        <span>Checked Baggage:</span>
-                                        <strong id="docCheckedBaggage">--</strong>
-                                    </div>
-                                    <div class="summary-col">
-                                        <span>Cabin Baggage:</span>
-                                        <strong id="docCabinBaggage">--</strong>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Price Band Render -->
-                            <div class="doc-price-band" id="docPriceBand">
-                                <span class="price-title" id="lblTotalFare">TOTAL FARE AMOUNT</span>
-                                <span class="price-value" id="docPriceVal">0 DZD</span>
-                            </div>
-
-                            <!-- Travel Instructions -->
-                            <div class="doc-instructions" id="docInstructionsBox">
-                                <h4 id="lblNoticeTitle"><i class="fa-solid fa-triangle-exclamation"></i> IMPORTANT TRAVEL INFORMATION</h4>
-                                <ul id="docInstructionsList">
-                                    <!-- Dynamic Instructions List -->
-                                </ul>
-                            </div>
-
-                            <!-- Footer Section -->
-                            <div class="doc-footer">
-                                <p id="docFooterText">شكرًا لاختياركم أفق للطيران، نتمنى لكم رحلة سعيدة وآمنة. Thank you for choosing Ofoq Travel.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Page 3: History View -->
-            <section id="view-history" class="page-view">
-                <div class="dashboard-content-box">
-                    <div class="box-header-actions">
-                        <div class="search-input-wrap">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="historySearchInput" placeholder="بحث بالاسم، الـ PNR، رقم التذكرة، رقم الرحلة..." oninput="filterHistory()">
-                        </div>
-                    </div>
-                    <div class="table-responsive margin-top-15">
-                        <table class="data-table">
+                    <div class="table-responsive">
+                        <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>PNR</th>
-                                    <th>المسافر الرئيسي</th>
-                                    <th>خط السير</th>
-                                    <th>التاريخ</th>
-                                    <th>الحالة</th>
+                                    <th>الصورة</th>
+                                    <th>الدولة / المدينة</th>
+                                    <th>الوصف</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminDestTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="dash-tab-content" id="tabOffers">
+                    <div class="d-flex justify-between align-center mb-3">
+                        <h2>إدارة العروض</h2>
+                        <button class="btn btn-primary btn-sm" id="addNewOfferBtn"><i class="fa-solid fa-plus"></i> إضافة عرض جديد</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>عنوان العرض</th>
+                                    <th>الوجهة</th>
                                     <th>السعر</th>
-                                    <th>إجراءات</th>
+                                    <th>التواريخ</th>
+                                    <th>الإجراءات</th>
                                 </tr>
                             </thead>
-                            <tbody id="historyTableBody">
-                                <!-- Dynamic Render -->
-                            </tbody>
+                            <tbody id="adminOffersTableBody"></tbody>
                         </table>
                     </div>
                 </div>
-            </section>
 
-            <!-- Page X: Airlines Management View -->
-            <section id="view-airlines" class="page-view">
-                <div class="dashboard-content-box">
-                    <div class="box-header">
-                        <h3><i class="fa-solid fa-plane"></i> إدارة شركات الطيران المحفوظة</h3>
-                        <button class="btn btn-gold btn-sm" onclick="openAirlineModal()">
-                            <i class="fa-solid fa-plus"></i> إضافة شركة طيران جديدة
-                        </button>
+                <div class="dash-tab-content" id="tabPromoOffers">
+                    <div class="d-flex justify-between align-center mb-3">
+                        <h2>العروض الترويجية الرئيسية</h2>
+                        <button class="btn btn-primary btn-sm" id="addNewPromoBtn"><i class="fa-solid fa-plus"></i> إضافة عرض ترويجي</button>
                     </div>
-                    <div class="table-responsive margin-top-15">
-                        <table class="data-table">
+                    <div class="table-responsive">
+                        <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>الشعار / الأيقونة</th>
-                                    <th>رمز الشركة (IATA)</th>
-                                    <th>اسم شركة الطيران</th>
-                                    <th>إجراءات</th>
+                                    <th>العنوان</th>
+                                    <th>الخصم / التفاصيل</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
                                 </tr>
                             </thead>
-                            <tbody id="airlinesTableBody">
-                                <!-- Dynamic Render -->
-                            </tbody>
+                            <tbody id="adminPromoTableBody"></tbody>
                         </table>
                     </div>
                 </div>
-            </section>
 
-            <!-- Page 4: Settings View -->
-            <section id="view-settings" class="page-view">
-                <div class="form-container">
-                    <div class="form-card">
-                        <div class="card-title"><i class="fa-solid fa-building"></i> إعدادات الهوية وبيانات الشركة</div>
-                        <div class="form-row flex-2">
-                            <div class="form-group">
-                                <label>اسم الشركة (بالعربية)</label>
-                                <input type="text" id="cfgCompanyNameAr">
-                            </div>
-                            <div class="form-group">
-                                <label>اسم الشركة (بالإنجليزية)</label>
-                                <input type="text" id="cfgCompanyNameEn">
-                            </div>
-                        </div>
-                        <div class="form-row flex-3">
-                            <div class="form-group">
-                                <label>رقم الهاتف</label>
-                                <input type="text" id="cfgPhone">
-                            </div>
-                            <div class="form-group">
-                                <label>البريد الإلكتروني</label>
-                                <input type="email" id="cfgEmail">
-                            </div>
-                            <div class="form-group">
-                                <label>العنوان</label>
-                                <input type="text" id="cfgAddress">
-                            </div>
-                        </div>
-                        <div class="form-row flex-2">
-                            <div class="form-group">
-                                <label>رابط الواتساب WhatsApp</label>
-                                <input type="text" id="cfgWhatsapp">
-                            </div>
-                            <div class="form-group">
-                                <label>الموقع الإلكتروني Website</label>
-                                <input type="text" id="cfgWebsite">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>شعار الشركة (رفع صورة PNG / JPG)</label>
-                            <input type="file" id="cfgLogoInput" accept="image/*" onchange="handleLogoUpload(event)">
-                            <div id="cfgLogoPreview" class="logo-preview-box"></div>
-                        </div>
+                <div class="dash-tab-content" id="tabGallery">
+                    <div class="d-flex justify-between align-center mb-3">
+                        <h2>إدارة المعرض</h2>
+                        <button class="btn btn-primary btn-sm" id="addNewGalleryBtn"><i class="fa-solid fa-plus"></i> رفع صورة للمعرض</button>
                     </div>
+                    <div class="gallery-admin-grid" id="adminGalleryGrid"></div>
+                </div>
 
-                    <div class="form-card">
-                        <div class="card-title"><i class="fa-solid fa-file-pen"></i> النواحي المخصصة والتعليمات</div>
-                        <div class="form-group">
-                            <label>رسالة تذييل الصفحة (Footer Text)</label>
-                            <input type="text" id="cfgFooterText">
-                        </div>
-                        <div class="form-group">
-                            <label>تعليمات السفر (كل تعليم على سطر جديد)</label>
-                            <textarea id="cfgInstructions" rows="5"></textarea>
-                        </div>
-                        <button class="btn btn-primary" onclick="saveSettings()"><i class="fa-solid fa-floppy-disk"></i> حفظ كافة الإعدادات</button>
+                <div class="dash-tab-content" id="tabVideos">
+                    <div class="d-flex justify-between align-center mb-3">
+                        <h2>إدارة الفيديوهات</h2>
+                        <button class="btn btn-primary btn-sm" id="addNewVideoBtn"><i class="fa-solid fa-plus"></i> إضافة فيديو</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>العنوان</th>
+                                    <th>الرابط / المصدر</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminVideosTableBody"></tbody>
+                        </table>
                     </div>
                 </div>
-            </section>
-        </main>
-    </div>
 
-    <!-- Modal: OCR / Import Text -->
-    <div id="importModal" class="modal-overlay">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-file-import"></i> استيراد وتفكيك بيانات الحجز (Smart Import / OCR)</h3>
-                <button class="close-btn" onclick="closeModal('importModal')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p class="text-sm">يمكنك هنا لصق النص الكامل للحجز، أو رفع ملف PDF / صورة لاستخراج البيانات منها تلقائياً:</p>
-                <div class="form-group margin-top-10">
-                    <label>رفع صورة التذكرة / PDF لعملية الـ OCR:</label>
-                    <input type="file" id="ocrFileInput" accept="image/*,application/pdf" onchange="processOCRFile(event)">
-                    <div id="ocrStatus" class="ocr-status-text"></div>
+                <div class="dash-tab-content" id="tabFaq">
+                    <div class="d-flex justify-between align-center mb-3">
+                        <h2>الأسئلة الشائعة</h2>
+                        <button class="btn btn-primary btn-sm" id="addNewFaqBtn"><i class="fa-solid fa-plus"></i> إضافة سؤال</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>السؤال</th>
+                                    <th>الإجابة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminFaqTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>أو إدخال / لصق نص الحجز الخام هنا:</label>
-                    <textarea id="importRawText" rows="7" placeholder="ألصق نص الحجز أو تفاصيل Flight Ticket هنا..."></textarea>
+
+                <div class="dash-tab-content" id="tabSecurity">
+                    <h2>الأمان وتغيير كلمة المرور</h2>
+                    <form id="changePasswordForm" class="admin-form">
+                        <div class="form-group">
+                            <label>كلمة المرور الحالية</label>
+                            <input type="password" id="currPassInput" required>
+                        </div>
+                        <div class="form-group">
+                            <label>كلمة المرور الجديدة</label>
+                            <input type="password" id="newPassInput" required>
+                        </div>
+                        <div class="form-group">
+                            <label>تأكيد كلمة المرور الجديدة</label>
+                            <input type="password" id="confirmPassInput" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">تحديث كلمة المرور</button>
+                    </form>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success" onclick="executeTextImport()"><i class="fa-solid fa-wand-magic-sparkles"></i> تفكيك واستخراج البيانات</button>
-                <button class="btn btn-outline" onclick="closeModal('importModal')">إلغاء</button>
+
+                <div class="dash-tab-content" id="tabBackup">
+                    <h2>النسخ الاحتياطي واستعادة البيانات</h2>
+                    <div class="backup-box">
+                        <p>يمكنك تصدير نسخة احتياطية كاملة من جميع بيانات الموقع والإعدادات والطلبات كملف JSON، أو استعادة البيانات من ملف سابق.</p>
+                        <div class="mt-3">
+                            <button id="exportBackupBtn" class="btn btn-primary"><i class="fa-solid fa-download"></i> تصدير النسخة الاحتياطية (Export)</button>
+                        </div>
+                        <div class="mt-4">
+                            <label class="btn btn-outline">
+                                <i class="fa-solid fa-upload"></i> استعادة نسخة احتياطية (Import)
+                                <input type="file" id="importBackupFile" accept=".json" style="display:none;">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <!-- Modal: Add / Edit Airline -->
-    <div id="airlineModal" class="modal-overlay">
-        <div class="modal-card">
+    <div id="adminGenericModal" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
             <div class="modal-header">
-                <h3 id="airlineModalTitle"><i class="fa-solid fa-plane"></i> إضافة شركة طيران جديدة</h3>
-                <button class="close-btn" onclick="closeModal('airlineModal')">&times;</button>
+                <h3 id="genericModalTitle">تعديل عنصر</h3>
+                <button class="close-modal-btn" id="closeGenericModal">&times;</button>
             </div>
-            <div class="modal-body">
-                <input type="hidden" id="editAirlineOriginalCode" value="">
-                <div class="form-group">
-                    <label>رمز شركة الطيران (IATA Code - حرفين أو 3)</label>
-                    <input type="text" id="newAirlineCode" class="upper" placeholder="مثال: XY">
+            <div class="modal-body" id="genericModalBody">
                 </div>
-                <div class="form-group">
-                    <label>اسم شركة الطيران الكامل</label>
-                    <input type="text" id="newAirlineName" placeholder="مثال: Flynas">
-                </div>
-                <div class="form-group">
-                    <label>رمز الشعار / الإيموجي (اختياري في حال رفع صورة)</label>
-                    <input type="text" id="newAirlineLogo" placeholder="مثال: 🇸🇦">
-                </div>
-                <div class="form-group">
-                    <label>رفع صورة شعار الشركة (PNG / JPG / JPEG) — اتركه فارغاً للحفاظ على الشعار الحالي عند التعديل</label>
-                    <input type="file" id="newAirlineLogoFile" accept="image/*" onchange="handleNewAirlineLogoUpload(event)">
-                    <div id="newAirlineLogoPreview" class="logo-preview-box"></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success" onclick="saveNewAirline()">حفظ وحفظ دائم</button>
-                <button class="btn btn-outline" onclick="closeModal('airlineModal')">إلغاء</button>
-            </div>
         </div>
     </div>
-
-    <!-- Modal: Add Airport -->
-    <div id="airportModal" class="modal-overlay">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-location-dot"></i> إضافة مطار جديد</h3>
-                <button class="close-btn" onclick="closeModal('airportModal')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>رمز المطار (IATA - 3 أحرف)</label>
-                    <input type="text" id="newAirportIata" class="upper" placeholder="مثال: MED">
-                </div>
-                <div class="form-group">
-                    <label>المدينة</label>
-                    <input type="text" id="newAirportCity" placeholder="مثال: Madinah">
-                </div>
-                <div class="form-group">
-                    <label>اسم المطار الكامل</label>
-                    <input type="text" id="newAirportName" placeholder="مثال: Prince Mohammad bin Abdulaziz Airport">
-                </div>
-                <div class="form-group">
-                    <label>الدولة</label>
-                    <input type="text" id="newAirportCountry" placeholder="مثال: Saudi Arabia">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success" onclick="saveNewAirport()">حفظ وحفظ دائم</button>
-                <button class="btn btn-outline" onclick="closeModal('airportModal')">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification Toast System -->
-    <div id="toastContainer" class="toast-container"></div>
 
     <script src="script.js"></script>
 </body>
