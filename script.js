@@ -38,7 +38,7 @@ const DEFAULT_SERVICES = [
     { id: 5, title: "حجوزات الفنادق", desc: "المساعدة في اختيار وحجز أفضل الفنادق الفاخرة.", icon: "fa-hotel" },
     { id: 6, title: "الرحلات الجماعية", desc: "تنظيم الحجوزات والرحلات للمجموعات والوفود.", icon: "fa-users" },
     { id: 7, title: "الاستشارات السياحية", desc: "مساعدة العميل في اختيار الوجهة والرحلة المثالية.", icon: "fa-comments-dollar" },
-    { id: 8, title: "خدمات السفر المتكاملة", desc: "تنسيق تفاصيل الرحلة وتقديم الدعم المتواصل.", icon: "youtfa-shield-heart" }
+    { id: 8, title: "خدمات السفر المتكاملة", desc: "تنسيق تفاصيل الرحلة وتقديم الدعم المتواصل.", icon: "fa-shield-heart" }
 ];
 
 const DEFAULT_DESTINATIONS = [
@@ -69,7 +69,7 @@ const DEFAULT_GALLERY = [
 ];
 
 const DEFAULT_VIDEOS = [
-    { id: 1, title: "تجربة السفر مع أفق للطيران", url: "https://www.youtube.com/watch?v=2b2gJu-g3qE&list=RD2b2gJu-g3qE&start_radio=1", type: "youtube" }
+    { id: 1, title: "تجربة السفر مع أفق للطيران", url: "https://www.youtube.com/embed/KOc146R8sws", type: "youtube" }
 ];
 
 const DEFAULT_TESTIMONIALS = [
@@ -104,7 +104,7 @@ let db = {
     faq: loadStorage('ofoq_faq', DEFAULT_FAQ),
     social: loadStorage('ofoq_social', DEFAULT_SOCIAL),
     requests: loadStorage('ofoq_requests', []),
-    logo: loadStorage('ofoq_logo', null) // Base64 or image data
+    logo: loadStorage('ofoq_logo', null)
 };
 
 function loadStorage(key, defaultVal) {
@@ -114,7 +114,6 @@ function loadStorage(key, defaultVal) {
     try {
         return JSON.parse(data);
     } catch (e) {
-        // إذا فشل التحليل، فهذا يعني أن البيانات المخزنة عبارة عن نص عادي (مثل مسار صورة أو رابط) وليس JSON
         return data;
     }
 }
@@ -456,8 +455,8 @@ function renderPublicWebsite() {
     document.getElementById('contact-email').textContent = s.email;
     document.getElementById('contact-address').textContent = s.address;
 
-document.getElementById('footer-brand-title').textContent = (s && s.companyName) ? (s.companyName.split('–')[0] || s.companyName) : 'أفق للطيران';
-document.getElementById('footer-brand-subtitle').textContent = (s?.companyName && s.companyName.includes('–')) ? s.companyName.split('–')[1].trim() : 'Ofoq Travel';
+    document.getElementById('footer-brand-title').textContent = (s && s.companyName) ? (s.companyName.split('–')[0] || s.companyName) : 'أفق للطيران';
+    document.getElementById('footer-brand-subtitle').textContent = (s?.companyName && s.companyName.includes('–')) ? s.companyName.split('–')[1].trim() : 'Ofoq Travel';
     document.getElementById('footer-about-text').textContent = s.footerText;
     document.getElementById('footer-copy').textContent = `جميع الحقوق محفوظة © 2026 ${s.companyName}`;
 
@@ -1176,7 +1175,7 @@ function importBackup() {
         reader.onload = function(e) {
             try {
                 const imported = JSON.parse(e.target.result);
-                if (imported && confirmed('هل تريد حقاً استبدال كافة البيانات الحالية بالنسخة الاحتياطية؟')) {
+                if (imported && confirm('هل تريد حقاً استبدال كافة البيانات الحالية بالنسخة الاحتياطية؟')) {
                     db = imported;
                     saveAll();
                     alert('تم استعادة النسخة الاحتياطية بنجاح!');
