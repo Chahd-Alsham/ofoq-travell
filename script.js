@@ -38,7 +38,7 @@ const DEFAULT_SERVICES = [
     { id: 5, title: "حجوزات الفنادق", desc: "المساعدة في اختيار وحجز أفضل الفنادق الفاخرة.", icon: "fa-hotel" },
     { id: 6, title: "الرحلات الجماعية", desc: "تنظيم الحجوزات والرحلات للمجموعات والوفود.", icon: "fa-users" },
     { id: 7, title: "الاستشارات السياحية", desc: "مساعدة العميل في اختيار الوجهة والرحلة المثالية.", icon: "fa-comments-dollar" },
-    { id: 8, title: "خدمات السفر المتكاملة", desc: "تنسيق تفاصيل الرحلة وتقديم الدعم المتواصل.", icon: "fa-shield-heart" }
+    { id: 8, title: "خدمات السفر المتكاملة", desc: "تنسيق تفاصيل الرحلة وتقديم الدعم المتواصل.", icon: "youtfa-shield-heart" }
 ];
 
 const DEFAULT_DESTINATIONS = [
@@ -69,7 +69,7 @@ const DEFAULT_GALLERY = [
 ];
 
 const DEFAULT_VIDEOS = [
-    { id: 1, title: "تجربة السفر مع أفق للطيران", url: "https://www.youtube.com/embed/KOc146R8sws", type: "youtube" }
+    { id: 1, title: "تجربة السفر مع أفق للطيران", url: "https://www.youtube.com/watch?v=KOc146R8sws&list=RDKOc146R8sws&start_radio=1", type: "youtube" }
 ];
 
 const DEFAULT_TESTIMONIALS = [
@@ -456,8 +456,8 @@ function renderPublicWebsite() {
     document.getElementById('contact-email').textContent = s.email;
     document.getElementById('contact-address').textContent = s.address;
 
-    document.getElementById('footer-brand-title').textContent = s.companyName.split('–')[0] || s.companyName;
-    document.getElementById('footer-brand-subtitle').textContent = s.companyName.split('–')[1] || 'Ofoq Travel';
+document.getElementById('footer-brand-title').textContent = (s && s.companyName) ? (s.companyName.split('–')[0] || s.companyName) : 'أفق للطيران';
+document.getElementById('footer-brand-subtitle').textContent = (s?.companyName && s.companyName.includes('–')) ? s.companyName.split('–')[1].trim() : 'Ofoq Travel';
     document.getElementById('footer-about-text').textContent = s.footerText;
     document.getElementById('footer-copy').textContent = `جميع الحقوق محفوظة © 2026 ${s.companyName}`;
 
@@ -1190,4 +1190,49 @@ function importBackup() {
     } else {
         alert('الرجاء اختيار ملف JSON أولاً.');
     }
+}
+function openAddServiceModal() {
+    const title = prompt("أدخل اسم الخدمة الجديدة:");
+    if (!title) return;
+    const desc = prompt("أدخل وصف الخدمة:");
+    const icon = prompt("أدخل أيقونة FontAwesome (مثال: fa-plane):") || "fa-plane";
+    db.services.push({ id: Date.now(), title, desc, icon });
+    saveAll();
+    switchAdminTab('services');
+}
+
+function openAddDestinationModal() {
+    const country = prompt("أدخل اسم الدولة:");
+    if (!country) return;
+    const city = prompt("أدخل اسم المدينة:");
+    const desc = prompt("أدخل وصف الوجهة:");
+    const image = prompt("أدخل رابط صورة الوجهة (URL):") || "https://images.unsplash.com/...";
+    db.destinations.push({ id: Date.now(), country, city, desc, image });
+    saveAll();
+    switchAdminTab('destinations');
+}
+
+function openAddOfferModal() {
+    const title = prompt("أدخل عنوان العرض:");
+    if (!title) return;
+    const destination = prompt("أدخل الوجهة:");
+    const desc = prompt("أدخل وصف العرض:");
+    const price = prompt("أدخل السعر (مثال: 1200$):") || "1000$";
+    const startDate = prompt("تاريخ البداية (YYYY-MM-DD):") || "2026-04-01";
+    const endDate = prompt("تاريخ النهاية (YYYY-MM-DD):") || "2026-05-01";
+    const image = prompt("رابط صورة العرض (URL):") || "https://images.unsplash.com/...";
+    db.offers.push({ id: Date.now(), title, destination, desc, price, startDate, endDate, image });
+    saveAll();
+    switchAdminTab('offers');
+}
+
+function openAddPromoModal() {
+    const title = prompt("أدخل عنوان العرض الترويجي:");
+    if (!title) return;
+    const desc = prompt("أدخل وصف العرض:");
+    const discount = prompt("نسبة الخصم أو السعر (مثال: 15%):") || "15%";
+    const image = prompt("رابط صورة العرض الترويجي (URL):") || "https://images.unsplash.com/...";
+    db.promos.push({ id: Date.now(), title, desc, discount, price: "تخفيض خاص", startDate: "2026-06-01", endDate: "2026-08-31", image, isFeatured: false });
+    saveAll();
+    switchAdminTab('promos');
 }
