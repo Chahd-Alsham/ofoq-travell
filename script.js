@@ -69,7 +69,7 @@ const DEFAULT_GALLERY = [
 ];
 
 const DEFAULT_VIDEOS = [
-    { id: 1, title: "تجربة السفر مع أفق للطيران", url: "https://www.youtube.com/watch?v=KOc146R8sws&list=RDKOc146R8sws&start_radio=1", type: "youtube" }
+    { id: 1, title: "تجربة السفر مع أفق للطيران", url: "https://www.youtube.com/watch?v=2b2gJu-g3qE&list=RD2b2gJu-g3qE&start_radio=1", type: "youtube" }
 ];
 
 const DEFAULT_TESTIMONIALS = [
@@ -1191,6 +1191,7 @@ function importBackup() {
         alert('الرجاء اختيار ملف JSON أولاً.');
     }
 }
+
 function openAddServiceModal() {
     const title = prompt("أدخل اسم الخدمة الجديدة:");
     if (!title) return;
