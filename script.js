@@ -409,11 +409,11 @@ function addFlightCard() {
                 <input type="time" class="f-dep-time">
             </div>
             <div class="form-group">
-                <label>تاريخ الوصول</label>
+                <label>تاريخ العودة</label>
                 <input type="date" class="f-arr-date" required>
             </div>
             <div class="form-group">
-                <label>وقت الوصول</label>
+                <label>وقت العودة</label>
                 <input type="time" class="f-arr-time">
             </div>
         </div>
@@ -549,7 +549,7 @@ function handleBookingSubmit(e) {
         waMessage += `المغادرة: ${f.dep}\n`;
         waMessage += `الوصول: ${f.arr}\n`;
         waMessage += `تاريخ المغادرة: ${f.depDate} | الوقت: ${f.depTime}\n`;
-        waMessage += `تاريخ الوصول: ${f.arrDate} | الوقت: ${f.arrTime}\n`;
+        waMessage += `تاريخ العودة: ${f.arrDate} | الوقت: ${f.arrTime}\n`;
         if (f.term) waMessage += `Terminal: ${f.term}\n`;
         if (f.flightClass) waMessage += `Class: ${f.flightClass}\n`;
         if (f.seat) waMessage += `Seat: ${f.seat}\n`;
@@ -566,9 +566,8 @@ function handleBookingSubmit(e) {
     const encodedMessage = encodeURIComponent(waMessage);
     const whatsappUrl = `https://wa.me/${data.settings.whatsapp.replace('+', '')}?text=${encodedMessage}`;
     
-    setTimeout(() => {
-        window.open(whatsappUrl, '_blank');
-    }, 1000);
+    // تم التعديل هنا لاستخدام الانتقال المباشر بدون تأخير زمني ليتوافق مع قيود الهواتف المحمولة
+    window.location.href = whatsappUrl;
 }
 
 // UI Setup & Event Listeners
