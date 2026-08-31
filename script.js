@@ -1,1061 +1,996 @@
-/* ==========================================
-   Ofoq Travel - Complete Local Vanilla JS Engine
-   ========================================== */
+// ==========================================
+// Ofoq Travel - Main Application Script
+// ==========================================
 
-const DEFAULT_DATA = {
-    settings: {
-        companyAr: "أفق للطيران",
-        companyEn: "Ofoq Travel",
-        phone: "+213564694878",
-        email: "travelofoq@gmail.com",
-        whatsapp: "+213564694879",
-        address: "الجزائر العاصمة، الجزائر",
-        adminPass: "ofoq2026admin",
-        isDefaultPass: true
-    },
-    offers: [
-        {
-            id: "offer-1",
-            title: "رحلة ساحرة إلى إسطنبول",
-            destination: "إسطنبول، تركيا",
-            description: "شمل التذاكر ذهاب وعودة مع الإقامة الفندقية لمدة 5 أيام ووجبة الإفطار.",
-            price: "اتصل بنا للتفاصيل",
-            currency: "",
-            image: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=600&q=80",
-            hidden: false
-        },
-        {
-            id: "offer-2",
-            title: "عطلة دبي الفاخرة",
-            destination: "دبي، الإمارات",
-            description: "استمتع بأجمل المعالم السياحية مع تذاكر الطيران المباشر والإقامة لـ 4 ليالٍ.",
-            price: "أتصل بنا للتفاصيل",
-            currency: "",
-            image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&q=80",
-            hidden: false
-        },
-        {
-            id: "offer-3",
-            title: "استكشاف باريس مدينة الأنوار",
-            destination: "باريس، فرنسا",
-            description: "رحلة مباشرة مع أرقى الخطوط الجوية وتذاكر زيارة الأماكن السياحية الشهيرة.",
-            price: "أتصل بنا للتفاصيل",
-            currency: "",
-            image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80",
-            hidden: false
-        }
-    ],
-    services: [
-        {
-            id: "serv-1",
-            title: "حجز تذاكر الطيران",
-            description: "حجز فوري لجميع الخطوط الجوية المحلية والدولية بأفضل الأسعار.",
-            icon: "fa-plane-departure",
-            image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=600&q=80",
-            hidden: false
-        },
-        {
-            id: "serv-2",
-            title: "حجز الفنادق والمنتجعات",
-            description: "شراكات مع آلاف الفنادق حول العالم لتوفير إقامة مريحة ومميزة.",
-            icon: "fa-hotel",
-            image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
-            hidden: false
-        },
-        {
-            id: "serv-3",
-            title: "الجولات السياحية",
-            description: "برامج سياحية متكاملة مع مرشدين سياحيين محترفين لاكتشاف أجمل المدن.",
-            icon: "fa-map-location-dot",
-            image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80",
-            hidden: false
-        }
-    ],
-    airlines: [
-        { id: "air-1", name: "الخطوط الجوية الجزائرية", logo: "https://cdn-icons-png.flaticon.com/512/3125/3125807.png", hidden: false },
-        { id: "air-2", name: "الخطوط الجوية التركية", logo: "https://cdn-icons-png.flaticon.com/512/3125/3125807.png", hidden: false },
-        { id: "air-3", name: "الخطوط الجوية القطرية", logo: "https://cdn-icons-png.flaticon.com/512/3125/3125807.png", hidden: false },
-        { id: "air-4", name: "طيران الإمارات", logo: "https://cdn-icons-png.flaticon.com/512/3125/3125807.png", hidden: false }
-    ],
-    airports: [
-        { id: "apt-1", code: "ALG", name: "مطار هواري بومدين الدولي (الجزائر)" },
-        { id: "apt-2", code: "IST", name: "مطار إسطنبول الدولي (تركيا)" },
-        { id: "apt-3", code: "DXB", name: "مطار دبي الدولي (الإمارات)" },
-        { id: "apt-4", code: "CDG", name: "مطار شارل ديغول (باريس)" }
-    ],
-    youtube: [
-        { id: "yt-1", title: "جولة في أسطول أفق للطيران", description: "تعرف على خدماتنا ودرجات السفر المختلفة.", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", hidden: false },
-        { id: "yt-2", title: "أفضل الوجهات السياحية لعام 2026", description: "اكتشف معنا أبرز الأماكن التي تستحق الزيارة.", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", hidden: false }
-    ],
-    gallery: [
-        { id: "gal-1", caption: "طائراتنا العصرية الحديثة", url: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=600&q=80", hidden: false },
-        { id: "gal-2", caption: "خدمة مقصورات رجال الأعمال", url: "https://images.unsplash.com/photo-1540339832862-474599807836?auto=format&fit=crop&w=600&q=80", hidden: false },
-        { id: "gal-3", caption: "وجهات سياحية عالمية ساحرة", url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80", hidden: false }
-    ],
-    bookings: []
+// Default Initial Data
+const DEFAULT_SETTINGS = {
+    companyName: "أفق للطيران",
+    companySub: "Ofoq Travel",
+    phone: "+213564694878",
+    whatsapp: "+213564694879",
+    email: "travelofoq@gmail.com",
+    heroTitle: "رحلتك تبدأ من هنا",
+    heroDesc: "نرافقك في رحلتك بخدمات سفر وحجوزات مصممة لتجعل تجربتك أسهل وأكثر راحة.",
+    aboutTitle: "شركة أفق للطيران - بوابتك نحو آفاق جديدة",
+    aboutDesc: "نحن نقدم خدمات سياحية وحجوزات طيران متكاملة تلبي تطلعات المسافر العصري والباحث عن الفخامة والراحة التامة في كل خطوة.",
+    aboutImage: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&q=80",
+    adminPass: "admin123" // Default password
 };
 
-let currentTripType = 'one-way';
-let isAdminLoggedIn = false;
+const DEFAULT_SERVICES = [
+    { id: 's1', title: "حجز تذاكر الطيران", desc: "احجز مقعدك مع أفضل شركات الطيران العالمية بكل سهولة ويسر.", icon: "fa-plane-departure" },
+    { id: 's2', title: "حجز الفنادق الفاخرة", desc: "أرقى الفنادق والمنتجعات العالمية بأسعار تنافسية وخدمة استثنائية.", icon: "fa-hotel" },
+    { id: 's3', title: "تنظيم الرحلات السياحية", desc: "برامج سياحية متكاملة ومصممة خصيصاً لتناسب تطلعات عائلتك.", icon: "fa-earth-americas" },
+    { id: 's4', title: "خدمات رجال الأعمال", desc: "حلول سفر سريعة ومخصصة لرجال الأعمال والشركات الكبرى.", icon: "fa-briefcase" }
+];
 
-document.addEventListener("DOMContentLoaded", () => {
-    try {
-        initDatabase();
-        setupEventListeners();
-        renderAllFrontend();
-    } catch (err) {
-        console.error("Initialization Error:", err);
-        showToast("حدث خطأ أثناء تحميل التطبيق", "error");
-    }
-});
+const DEFAULT_OFFERS = [
+    { id: 'o1', title: "رحلة دبي الفاخرة", destination: "دبي، الإمارات", desc: "استمتع بسحر دبي ومعالمها السياحية العالمية.", image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&q=80" },
+    { id: 'o2', title: "سحر اسطنبول التاريخية", destination: "اسطنبول، تركيا", desc: "اكتشف جمال التاريخ والطبيعة الساحرة على بوسفور.", image: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=600&q=80" },
+    { id: 'o3', title: "جولة الدوحة العصرية", destination: "الدوحة، قطر", desc: "تجربة سفر فريدة تجمع بين الاصالة والحداثة.", image: "https://images.unsplash.com/photo-1583089898916-d820f171050a?auto=format&fit=crop&w=600&q=80" }
+];
 
-function initDatabase() {
-    try {
-        if (!localStorage.getItem("ofoq_initialized")) {
-            localStorage.setItem("ofoq_data", JSON.stringify(DEFAULT_DATA));
-            localStorage.setItem("ofoq_initialized", "true");
-        }
-    } catch (err) {
-        console.error("DB Init Error:", err);
+const DEFAULT_AIRLINES = [
+    { id: 'al1', name: "الخطوط الجوية القطرية", iata: "QR", icao: "QTR", logo: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=150&q=80" },
+    { id: 'al2', name: "طيران الإمارات", iata: "EK", icao: "UAE", logo: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=150&q=80" },
+    { id: 'al3', name: "الخطوط السعودية", iata: "SV", icao: "SVA", logo: "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=150&q=80" }
+];
+
+const DEFAULT_AIRPORTS = [
+    { id: 'ap1', name: "مطار هواري بومدين الدولي", code: "ALG", city: "الجزائر" },
+    { id: 'ap2', name: "مطار دبي الدولي", code: "DXB", city: "دبي" },
+    { id: 'ap3', name: "مطار حمد الدولي", code: "DOH", city: "الدوحة" }
+];
+
+const DEFAULT_DESTINATIONS = [
+    { id: 'd1', name: "اسطنبول", country: "تركيا", image: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=600&q=80" },
+    { id: 'd2', name: "دبي", country: "الإمارات", image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&q=80" },
+    { id: 'd3', name: "باريس", country: "فرنسا", image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80" },
+    { id: 'd4', name: "كوالالمبور", country: "ماليزيا", image: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=600&q=80" }
+];
+
+const DEFAULT_YOUTUBE = [
+    { id: 'y1', title: "تجربة درجة رجال الأعمال مع أفق", desc: "شاهد كيف تبدو رحلتك معنا", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
+];
+
+const DEFAULT_GALLERY = [
+    { id: 'g1', title: "طائراتنا الفاخرة", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=600&q=80" },
+    { id: 'g2', title: "استرخاء في السحاب", image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=600&q=80" },
+    { id: 'g3', title: "خدمة استثنائية", image: "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=600&q=80" }
+];
+
+const DEFAULT_WHY = [
+    { id: 'w1', title: "خبرة واسعة", desc: "سنوات طويلة من التميز في قطاع الطيران والسفر.", icon: "fa-award" },
+    { id: 'w2', title: "دعم على مدار الساعة", desc: "فريق دعم فني متواجد دائماً لخدمتك ومساعدتك.", icon: "fa-headset" },
+    { id: 'w3', title: "أسعار تنافسية", desc: "أفضل العروض والأسعار التي تناسب ميزانيتك.", icon: "fa-tags" }
+];
+
+// LocalStorage Initialization Check
+function initLocalStorage() {
+    if (!localStorage.getItem('ofoq_initialized')) {
+        localStorage.setItem('ofoq_settings', JSON.stringify(DEFAULT_SETTINGS));
+        localStorage.setItem('ofoq_services', JSON.stringify(DEFAULT_SERVICES));
+        localStorage.setItem('ofoq_offers', JSON.stringify(DEFAULT_OFFERS));
+        localStorage.setItem('ofoq_airlines', JSON.stringify(DEFAULT_AIRLINES));
+        localStorage.setItem('ofoq_airports', JSON.stringify(DEFAULT_AIRPORTS));
+        localStorage.setItem('ofoq_destinations', JSON.stringify(DEFAULT_DESTINATIONS));
+        localStorage.setItem('ofoq_youtube', JSON.stringify(DEFAULT_YOUTUBE));
+        localStorage.setItem('ofoq_gallery', JSON.stringify(DEFAULT_GALLERY));
+        localStorage.setItem('ofoq_why', JSON.stringify(DEFAULT_WHY));
+        localStorage.setItem('ofoq_bookings', JSON.stringify([]));
+        localStorage.setItem('ofoq_initialized', 'true');
     }
 }
 
-function getAppData() {
+// Helpers to get/set data
+function getData(key) {
     try {
-        const dataStr = localStorage.getItem("ofoq_data");
-        return dataStr ? JSON.parse(dataStr) : DEFAULT_DATA;
-    } catch (err) {
-        console.error("Get Data Error:", err);
-        return DEFAULT_DATA;
+        return JSON.parse(localStorage.getItem('ofoq_' + key)) || [];
+    } catch(e) {
+        return [];
     }
 }
 
-function saveAppData(data) {
+function saveData(key, data) {
+    localStorage.setItem('ofoq_' + key, JSON.stringify(data));
+}
+
+function getSettings() {
     try {
-        localStorage.setItem("ofoq_data", JSON.stringify(data));
-    } catch (err) {
-        console.error("Save Data Error:", err);
-        showToast("فشل الحفظ في التخزين المحلي", "error");
+        return JSON.parse(localStorage.getItem('ofoq_settings')) || DEFAULT_SETTINGS;
+    } catch(e) {
+        return DEFAULT_SETTINGS;
     }
 }
 
-function showToast(message, type = "success") {
-    const container = document.getElementById("toast-container");
+function saveSettings(settings) {
+    localStorage.setItem('ofoq_settings', JSON.stringify(settings));
+}
+
+// Toast Notifications
+function showToast(message) {
+    let container = document.getElementById('toastContainer');
     if (!container) return;
-    const toast = document.createElement("div");
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-triangle-exclamation'}"></i> ${message}`;
+    let toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--accent)"></i> <span>${message}</span>`;
     container.appendChild(toast);
     setTimeout(() => {
-        toast.remove();
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
     }, 3000);
 }
 
-function setupEventListeners() {
-    const hamburger = document.getElementById("hamburger-btn");
-    const drawer = document.getElementById("mobile-drawer");
-    const overlay = document.getElementById("drawer-overlay");
-    const closeDrawerBtn = document.getElementById("close-drawer");
-
-    if (hamburger && drawer && overlay) {
-        hamburger.addEventListener("click", () => {
-            drawer.classList.add("open");
-            overlay.classList.add("open");
-        });
-        overlay.addEventListener("click", () => {
-            drawer.classList.remove("open");
-            overlay.classList.remove("open");
-        });
-        if (closeDrawerBtn) {
-            closeDrawerBtn.addEventListener("click", () => {
-                drawer.classList.remove("open");
-                overlay.classList.remove("open");
-            });
-        }
-    }
-}
-
-function closeMobileMenu() {
-    const drawer = document.getElementById("mobile-drawer");
-    const overlay = document.getElementById("drawer-overlay");
-    if (drawer) drawer.classList.remove("open");
-    if (overlay) overlay.classList.remove("open");
-}
-
-function scrollToBooking() {
-    const bookingSec = document.getElementById("booking");
-    if (bookingSec) {
-        bookingSec.scrollIntoView({ behavior: 'smooth' });
-    }
-}
-
-function setTripType(type) {
-    currentTripType = type;
-    document.querySelectorAll('.trip-type-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-    const returnGroup = document.getElementById("return-date-group");
-    if (returnGroup) {
-        if (type === 'one-way') {
-            returnGroup.style.display = 'none';
-            document.getElementById('b-ret-date').removeAttribute('required');
-        } else {
-            returnGroup.style.display = 'flex';
-            document.getElementById('b-ret-date').setAttribute('required', 'true');
-        }
-    }
-}
-
-function renderAllFrontend() {
-    const data = getAppData();
+// Render Frontend Website Content
+function renderFrontend() {
+    let settings = getSettings();
     
-    // Settings / Brand
-    document.getElementById("brand-name").innerText = data.settings.companyAr;
-    document.getElementById("hero-title").innerText = `رحلتك القادمة مع ${data.settings.companyAr}`;
-    document.getElementById("contact-phone-display").innerText = data.settings.phone;
-    document.getElementById("contact-email-display").innerText = data.settings.email;
-    document.getElementById("contact-wa-display").innerText = data.settings.whatsapp;
-    document.getElementById("contact-address-display").innerText = data.settings.address;
-    document.getElementById("footer-brand-title").innerText = data.settings.companyAr;
-    document.getElementById("hero-whatsapp-btn").href = `https://wa.me/${data.settings.whatsapp.replace(/[^0-9]/g, '')}`;
+    // Update Header & Footer
+    document.querySelectorAll('.company-name').forEach(el => el.textContent = settings.companyName);
+    document.querySelectorAll('.company-sub').forEach(el => el.textContent = settings.companySub);
+    
+    let heroTitle = document.getElementById('heroTitleDisplay');
+    if (heroTitle) heroTitle.textContent = settings.heroTitle;
+    let heroDesc = document.getElementById('heroDescDisplay');
+    if (heroDesc) heroDesc.textContent = settings.heroDesc;
+    
+    let heroWaBtn = document.getElementById('heroWhatsAppBtn');
+    if (heroWaBtn) heroWaBtn.href = `https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, '')}`;
+    
+    let aboutTitle = document.getElementById('aboutTitleDisplay');
+    if (aboutTitle) aboutTitle.textContent = settings.aboutTitle;
+    let aboutDesc = document.getElementById('aboutDescDisplay');
+    if (aboutDesc) aboutDesc.textContent = settings.aboutDesc;
+    let aboutImg = document.getElementById('aboutImageDisplay');
+    if (aboutImg) aboutImg.src = settings.aboutImage;
+    
+    let phoneDisp = document.getElementById('contactPhoneDisplay');
+    if (phoneDisp) phoneDisp.textContent = settings.phone;
+    let waDisp = document.getElementById('contactWaDisplay');
+    if (waDisp) waDisp.textContent = settings.whatsapp;
+    let emailDisp = document.getElementById('contactEmailDisplay');
+    if (emailDisp) emailDisp.textContent = settings.email;
 
-    // Services
-    const servGrid = document.getElementById("services-grid");
-    if (servGrid) {
-        servGrid.innerHTML = data.services.filter(s => !s.hidden).map(s => `
-            <div class="card">
-                <img src="${s.image}" alt="${s.title}" loading="lazy">
+    // Render Services
+    let servicesGrid = document.getElementById('servicesGrid');
+    if (servicesGrid) {
+        let services = getData('services');
+        servicesGrid.innerHTML = services.map(s => `
+            <div class="card-item">
+                <div class="card-icon-box"><i class="fa-solid ${s.icon || 'fa-plane'}"></i></div>
                 <div class="card-body">
-                    <h3><i class="fa-solid ${s.icon}"></i> ${s.title}</h3>
-                    <p>${s.description}</p>
+                    <h3>${s.title}</h3>
+                    <p>${s.desc}</p>
                 </div>
             </div>
         `).join('');
     }
 
-    // Offers
-    const offGrid = document.getElementById("offers-grid");
-    if (offGrid) {
-        offGrid.innerHTML = data.offers.filter(o => !o.hidden).map(o => `
-            <div class="card">
-                <img src="${o.image}" alt="${o.title}" loading="lazy">
+    // Render Offers
+    let offersGrid = document.getElementById('offersGrid');
+    if (offersGrid) {
+        let offers = getData('offers');
+        offersGrid.innerHTML = offers.map(o => `
+            <div class="card-item">
+                <div class="card-img-box">
+                    <img src="${o.image}" alt="${o.title}">
+                </div>
                 <div class="card-body">
+                    <span class="sub-tag">${o.destination}</span>
                     <h3>${o.title}</h3>
-                    <p><i class="fa-solid fa-location-dot"></i> ${o.destination}</p>
-                    <p>${o.description}</p>
-                    <div class="card-footer">
-                        <span class="price">${o.price} ${o.currency}</span>
-                        <button class="btn btn-primary btn-sm" onclick="scrollToBooking()">احجز العرض</button>
-                    </div>
+                    <p>${o.desc}</p>
+                    <a href="#booking" class="btn btn-primary mt-2">تواصل معنا للتفاصيل</a>
                 </div>
             </div>
         `).join('');
     }
 
-    // Airlines
-    const airGrid = document.getElementById("airlines-grid");
-    if (airGrid) {
-        airGrid.innerHTML = data.airlines.filter(a => !a.hidden).map(a => `
+    // Render Airlines
+    let airlinesGrid = document.getElementById('airlinesGrid');
+    if (airlinesGrid) {
+        let airlines = getData('airlines');
+        airlinesGrid.innerHTML = airlines.map(al => `
             <div class="airline-card">
-                <img src="${a.logo}" alt="${a.name}" loading="lazy">
-                <h4>${a.name}</h4>
+                <img src="${al.logo}" alt="${al.name}">
+                <h4>${al.name}</h4>
+                <p>IATA: ${al.iata} | ICAO: ${al.icao}</p>
             </div>
         `).join('');
     }
 
-    // Gallery
-    const galGrid = document.getElementById("gallery-grid");
-    if (galGrid) {
-        galGrid.innerHTML = data.gallery.filter(g => !g.hidden).map(g => `
-            <div class="gallery-item">
-                <img src="${g.url}" alt="${g.caption}" loading="lazy">
-                <div class="gallery-caption">${g.caption}</div>
+    // Render Destinations
+    let destGrid = document.getElementById('destinationsGrid');
+    if (destGrid) {
+        let dests = getData('destinations');
+        destGrid.innerHTML = dests.map(d => `
+            <div class="card-item">
+                <div class="card-img-box">
+                    <img src="${d.image}" alt="${d.name}">
+                </div>
+                <div class="card-body">
+                    <h3>${d.name}، ${d.country}</h3>
+                    <p>استكشف أجمل الوجهات السياحية معنا.</p>
+                </div>
             </div>
         `).join('');
     }
 
-    // YouTube
-    const ytGrid = document.getElementById("youtube-grid");
+    // Render Why Ofoq
+    let whyGrid = document.getElementById('whyGrid');
+    if (whyGrid) {
+        let why = getData('why');
+        whyGrid.innerHTML = why.map(w => `
+            <div class="card-item">
+                <div class="card-icon-box"><i class="fa-solid ${w.icon || 'fa-check'}"></i></div>
+                <div class="card-body">
+                    <h3>${w.title}</h3>
+                    <p>${w.desc}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Render YouTube
+    let ytGrid = document.getElementById('youtubeGrid');
     if (ytGrid) {
-        ytGrid.innerHTML = data.youtube.filter(y => !y.hidden).map(y => `
-            <div class="card">
-                <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
-                    <iframe src="${y.url}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
+        let yts = getData('youtube');
+        ytGrid.innerHTML = yts.map(y => `
+            <div class="youtube-card">
+                <div class="youtube-frame">
+                    <iframe src="${y.url}" allowfullscreen></iframe>
                 </div>
                 <div class="card-body">
                     <h3>${y.title}</h3>
-                    <p>${y.description}</p>
+                    <p>${y.desc}</p>
                 </div>
+            </div>
+        `).join('');
+    }
+
+    // Render Gallery
+    let galGrid = document.getElementById('galleryGrid');
+    if (galGrid) {
+        let gals = getData('gallery');
+        galGrid.innerHTML = gals.map(g => `
+            <div class="gallery-item" onclick="openLightbox('${g.image}', '${g.title}')">
+                <img src="${g.image}" alt="${g.title}">
+                <div class="gallery-caption">${g.title}</div>
             </div>
         `).join('');
     }
 }
 
-/* Booking Submission */
-function handleBookingSubmit(event) {
-    event.preventDefault();
-    try {
-        const data = getAppData();
-        const bookingNum = `OFQ-2026-${String(data.bookings.length + 1).padStart(4, '0')}`;
-        
-        const newBooking = {
-            id: bookingNum,
-            type: currentTripType,
-            fullName: document.getElementById("b-fullname").value.trim(),
-            phone: document.getElementById("b-phone").value.trim(),
-            email: document.getElementById("b-email").value.trim(),
-            departure: document.getElementById("b-departure").value.trim(),
-            arrival: document.getElementById("b-arrival").value.trim(),
-            airline: document.getElementById("b-airline").value.trim() || "غير محدد",
-            flightNum: document.getElementById("b-flight-num").value.trim() || "غير محدد",
-            depDate: document.getElementById("b-dep-date").value,
-            retDate: document.getElementById("b-ret-date").value || "بدون",
-            passport: document.getElementById("b-passport").value.trim() || "غير محدد",
-            nationality: document.getElementById("b-nationality").value.trim() || "غير محدد",
-            classType: document.getElementById("b-class").value.trim() || "سياحية",
-            adults: document.getElementById("b-adults").value,
-            children: document.getElementById("b-children").value,
-            infants: document.getElementById("b-infants").value,
-            notes: document.getElementById("b-notes").value.trim() || "لا توجد ملاحظات",
-            status: "جديد",
-            createdAt: new Date().toISOString()
+// Lightbox Handler
+function openLightbox(imgSrc, captionText) {
+    let modal = document.getElementById('lightboxModal');
+    let img = document.getElementById('lightboxImg');
+    let caption = document.getElementById('lightboxCaption');
+    if (modal && img && caption) {
+        modal.style.display = "block";
+        img.src = imgSrc;
+        caption.textContent = captionText;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    let closeLb = document.querySelector('.lightbox-close');
+    if (closeLb) {
+        closeLb.onclick = () => {
+            document.getElementById('lightboxModal').style.display = "none";
         };
-
-        data.bookings.push(newBooking);
-        saveAppData(data);
-        showToast(`تم حفظ الحجز بنجاح برقم: ${bookingNum}`, "success");
-
-        // Construct WhatsApp Message
-        const waNumber = data.settings.whatsapp.replace(/[^0-9]/g, '');
-        const waMsg = encodeURIComponent(
-            `✈️ *طلب حجز جديد عبر الموقع* \n\n` +
-            `🔢 رقم الحجز: ${bookingNum}\n` +
-            `👤 الاسم: ${newBooking.fullName}\n` +
-            `📞 الهاتف: ${newBooking.phone}\n` +
-            `📧 البريد: ${newBooking.email}\n` +
-            `🧭 نوع الرحلة: ${newBooking.type}\n` +
-            `🛫 المغادرة: ${newBooking.departure}\n` +
-            `🛬 الوصول: ${newBooking.arrival}\n` +
-            `✈️ شركة الطيران: ${newBooking.airline}\n` +
-            `🔢 رقم الرحلة: ${newBooking.flightNum}\n` +
-            `📅 تاريخ الذهاب: ${newBooking.depDate}\n` +
-            `📅 تاريخ العودة: ${newBooking.retDate}\n` +
-            `👥 البالغين: ${newBooking.adults} | الأطفال: ${newBooking.children} | الرضع: ${newBooking.infants}\n` +
-            `🆔 رقم الجواز: ${newBooking.passport}\n` +
-            `🌍 الجنسية: ${newBooking.nationality}\n` +
-            `📝 ملاحظات: ${newBooking.notes}`
-        );
-
-        setTimeout(() => {
-            window.open(`https://wa.me/${waNumber}?text=${waMsg}`, '_blank');
-        }, 1000);
-
-        document.getElementById("booking-form").reset();
-    } catch (err) {
-        console.error("Booking Error:", err);
-        showToast("حدث خطأ أثناء معالجة الحجز", "error");
     }
-}
+});
 
-/* Admin Modals & Flow */
-function openAdminModal() {
-    const data = getAppData();
-    if (isAdminLoggedIn) {
-        openAdminPanel();
-    } else if (data.settings.isDefaultPass) {
-        document.getElementById("admin-pass-change-modal").style.display = "flex";
-    } else {
-        document.getElementById("admin-login-modal").style.display = "flex";
-    }
-}
+// Mobile Navigation Toggle
+document.addEventListener('DOMContentLoaded', () => {
+    initLocalStorage();
+    renderFrontend();
 
-function closeAdminModal() {
-    document.getElementById("admin-login-modal").style.display = "none";
-    document.getElementById("admin-pass-change-modal").style.display = "none";
-}
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    const mainNav = document.getElementById('mainNav');
+    const mobileOverlay = document.getElementById('mobileOverlay');
 
-function handleFirstPassChange(event) {
-    event.preventDefault();
-    const p1 = document.getElementById("new-p-1").value;
-    const p2 = document.getElementById("new-p-2").value;
-    if (p1 !== p2) {
-        showToast("كلمتا المرور غير متطابقتين", "error");
-        return;
-    }
-    const data = getAppData();
-    data.settings.adminPass = p1;
-    data.settings.isDefaultPass = false;
-    saveAppData(data);
-    closeAdminModal();
-    showToast("تم تحديث كلمة المرور بنجاح. يرجى تسجيل الدخول بها.", "success");
-    document.getElementById("admin-login-modal").style.display = "flex";
-}
-
-function handleAdminLogin(event) {
-    event.preventDefault();
-    const pass = document.getElementById("admin-pass-input").value;
-    const data = getAppData();
-    if (pass === data.settings.adminPass) {
-        isAdminLoggedIn = true;
-        closeAdminModal();
-        document.getElementById("admin-pass-input").value = "";
-        openAdminPanel();
-        showToast("تم تسجيل الدخول بنجاح", "success");
-    } else {
-        showToast("كلمة المرور غير صحيحة", "error");
-    }
-}
-
-function openAdminPanel() {
-    document.getElementById("admin-panel").style.display = "flex";
-    renderAdminDashboard();
-}
-
-function closeAdminPanel() {
-    document.getElementById("admin-panel").style.display = "none";
-}
-
-function adminLogout() {
-    isAdminLoggedIn = false;
-    closeAdminPanel();
-    showToast("تم تسجيل الخروج بنجاح", "success");
-}
-
-function switchAdminTab(tabId) {
-    document.querySelectorAll('.admin-nav-link').forEach(l => l.classList.remove('active'));
-    document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
-    const targetLink = document.querySelector(`.admin-nav-link[data-target="${tabId}"]`);
-    if (targetLink) targetLink.classList.add('active');
-    const targetTab = document.getElementById(tabId);
-    if (targetTab) targetTab.classList.add('active');
-
-    if (tabId === 'dash-home') renderAdminDashboard();
-    if (tabId === 'dash-bookings') renderAdminBookings();
-    if (tabId === 'dash-offers') renderAdminOffers();
-    if (tabId === 'dash-services') renderAdminServices();
-    if (tabId === 'dash-airlines') renderAdminAirlines();
-    if (tabId === 'dash-airports') renderAdminAirports();
-    if (tabId === 'dash-youtube') renderAdminYoutube();
-    if (tabId === 'dash-gallery') renderAdminGallery();
-    if (tabId === 'dash-settings') loadAdminSettings();
-}
-
-function renderAdminDashboard() {
-    const data = getAppData();
-    const grid = document.getElementById("admin-stats-grid");
-    if (!grid) return;
-    
-    const totalB = data.bookings.length;
-    const newB = data.bookings.filter(b => b.status === 'جديد').length;
-    
-    grid.innerHTML = `
-        <div class="stat-card"><h4>إجمالي الحجوزات</h4><div class="number">${totalB}</div></div>
-        <div class="stat-card"><h4>الحجوزات الجديدة</h4><div class="number">${newB}</div></div>
-        <div class="stat-card"><h4>العروض النشطة</h4><div class="number">${data.offers.length}</div></div>
-        <div class="stat-card"><h4>الخدمات المتاحة</h4><div class="number">${data.services.length}</div></div>
-        <div class="stat-card"><h4>شركات الطيران</h4><div class="number">${data.airlines.length}</div></div>
-        <div class="stat-card"><h4>المطارات المسجلة</h4><div class="number">${data.airports.length}</div></div>
-        <div class="stat-card"><h4>الفيديوهات</h4><div class="number">${data.youtube.length}</div></div>
-        <div class="stat-card"><h4>صور المعرض</h4><div class="number">${data.gallery.length}</div></div>
-    `;
-}
-
-function renderAdminBookings() {
-    const data = getAppData();
-    const tbody = document.getElementById("bookings-tbody");
-    if (!tbody) return;
-    if (data.bookings.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">لا توجد حجوزات مسجلة بعد</td></tr>`;
-        return;
-    }
-    tbody.innerHTML = data.bookings.map(b => `
-        <tr>
-            <td><strong>${b.id}</strong></td>
-            <td>${b.fullName}</td>
-            <td>${b.phone}</td>
-            <td>${b.departure}</td>
-            <td>${b.arrival}</td>
-            <td>${b.depDate}</td>
-            <td><span style="color: ${b.status==='جديد'?'var(--sky-blue)':'var(--success)'}">${b.status}</span></td>
-            <td>
-                <button class="btn btn-danger btn-sm" onclick="deleteBooking('${b.id}')"><i class="fa-solid fa-trash"></i></button>
-            </td>
-        </tr>
-    `).join('');
-}
-
-function deleteBooking(id) {
-    if (!confirm("هل أنت متأكد من حذف هذا الحجز؟")) return;
-    const data = getAppData();
-    data.bookings = data.bookings.filter(b => b.id !== id);
-    saveAppData(data);
-    renderAdminBookings();
-    showToast("تم حذف الحجز بنجاح", "success");
-}
-
-function exportBookingsCSV() {
-    const data = getAppData();
-    if (data.bookings.length === 0) {
-        showToast("لا توجد حجوزات للتصدير", "error");
-        return;
-    }
-    let csv = "ID,Name,Phone,Email,Departure,Arrival,Airline,FlightNum,DepDate,ReturnDate,Status\n";
-    data.bookings.forEach(b => {
-        csv += `"${b.id}","${b.fullName}","${b.phone}","${b.email}","${b.departure}","${b.arrival}","${b.airline}","${b.flightNum}","${b.depDate}","${b.retDate}","${b.status}"\n`;
-    });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'ofoq_bookings.csv';
-    a.click();
-    showToast("تم تصدير ملف الحجوزات بنجاح", "success");
-}
-
-/* Admin CRUD: Offers */
-function renderAdminOffers() {
-    const data = getAppData();
-    const list = document.getElementById("admin-offers-list");
-    if (!list) return;
-    list.innerHTML = data.offers.map(o => `
-        <div class="admin-list-row">
-            <img src="${o.image}" alt="">
-            <div class="admin-list-info">
-                <h4>${o.title} (${o.destination})</h4>
-                <p>السعر: ${o.price} ${o.currency} | الحالة: ${o.hidden ? 'مخفي' : 'ظاهر'}</p>
-            </div>
-            <div class="admin-list-actions">
-                <button class="btn btn-secondary btn-sm" onclick="openOfferModal('${o.id}')">تعديل</button>
-                <button class="btn btn-secondary btn-sm" onclick="toggleOfferHide('${o.id}')">${o.hidden ? 'إظهار' : 'إخفاء'}</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteOffer('${o.id}')">حذف</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function openOfferModal(id = null) {
-    const data = getAppData();
-    let offer = { title: '', destination: '', description: '', price: '', currency: 'USD', image: '', hidden: false };
-    if (id) {
-        offer = data.offers.find(o => o.id === id) || offer;
-    }
-    document.getElementById("generic-modal-title").innerText = id ? "تعديل العرض" : "إضافة عرض جديد";
-    document.getElementById("generic-modal-body").innerHTML = `
-        <form onsubmit="saveOfferSubmit(event, '${id || ''}')">
-            <div class="form-group"><label>عنوان العرض</label><input type="text" id="off-title" value="${offer.title}" required></div>
-            <div class="form-group"><label>الوجهة</label><input type="text" id="off-dest" value="${offer.destination}" required></div>
-            <div class="form-group"><label>الوصف</label><textarea id="off-desc" rows="3" required>${offer.description}</textarea></div>
-            <div class="form-row">
-                <div class="form-group"><label>السعر</label><input type="number" id="off-price" value="${offer.price}" required></div>
-                <div class="form-group"><label>العملة</label><input type="text" id="off-curr" value="${offer.currency}" required></div>
-            </div>
-            <div class="form-group"><label>رابط الصورة</label><input type="text" id="off-img" value="${offer.image}" required></div>
-            <div class="form-submit-container"><button type="submit" class="btn btn-primary">حفظ</button></div>
-        </form>
-    `;
-    document.getElementById("generic-item-modal").style.display = "flex";
-}
-
-function saveOfferSubmit(event, id) {
-    event.preventDefault();
-    const data = getAppData();
-    const item = {
-        id: id || `offer-${Date.now()}`,
-        title: document.getElementById("off-title").value,
-        destination: document.getElementById("off-dest").value,
-        description: document.getElementById("off-desc").value,
-        price: document.getElementById("off-price").value,
-        currency: document.getElementById("off-curr").value,
-        image: document.getElementById("off-img").value,
-        hidden: false
-    };
-    if (id) {
-        const idx = data.offers.findIndex(o => o.id === id);
-        if (idx !== -1) data.offers[idx] = item;
-    } else {
-        data.offers.push(item);
-    }
-    saveAppData(data);
-    closeGenericModal();
-    renderAdminOffers();
-    renderAllFrontend();
-    showToast("تم الحفظ بنجاح", "success");
-}
-
-function toggleOfferHide(id) {
-    const data = getAppData();
-    const o = data.offers.find(x => x.id === id);
-    if (o) {
-        o.hidden = !o.hidden;
-        saveAppData(data);
-        renderAdminOffers();
-        renderAllFrontend();
-        showToast("تم تغيير حالة الظهور", "success");
-    }
-}
-
-function deleteOffer(id) {
-    if (!confirm("هل أنت متأكد من الحذف؟")) return;
-    const data = getAppData();
-    data.offers = data.offers.filter(o => o.id !== id);
-    saveAppData(data);
-    renderAdminOffers();
-    renderAllFrontend();
-    showToast("تم الحذف بنجاح", "success");
-}
-
-/* Admin CRUD: Services */
-function renderAdminServices() {
-    const data = getAppData();
-    const list = document.getElementById("admin-services-list");
-    if (!list) return;
-    list.innerHTML = data.services.map(s => `
-        <div class="admin-list-row">
-            <img src="${s.image}" alt="">
-            <div class="admin-list-info">
-                <h4><i class="fa-solid ${s.icon}"></i> ${s.title}</h4>
-                <p>${s.description} | الحالة: ${s.hidden ? 'مخفي' : 'ظاهر'}</p>
-            </div>
-            <div class="admin-list-actions">
-                <button class="btn btn-secondary btn-sm" onclick="openServiceModal('${s.id}')">تعديل</button>
-                <button class="btn btn-secondary btn-sm" onclick="toggleServiceHide('${s.id}')">${s.hidden ? 'إظهار' : 'إخفاء'}</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteService('${s.id}')">حذف</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function openServiceModal(id = null) {
-    const data = getAppData();
-    let s = { title: '', description: '', icon: 'fa-plane', image: '', hidden: false };
-    if (id) s = data.services.find(x => x.id === id) || s;
-    document.getElementById("generic-modal-title").innerText = id ? "تعديل الخدمة" : "إضافة خدمة جديدة";
-    document.getElementById("generic-modal-body").innerHTML = `
-        <form onsubmit="saveServiceSubmit(event, '${id || ''}')">
-            <div class="form-group"><label>عنوان الخدمة</label><input type="text" id="srv-title" value="${s.title}" required></div>
-            <div class="form-group"><label>الوصف</label><textarea id="srv-desc" rows="3" required>${s.description}</textarea></div>
-            <div class="form-group"><label>أيقونة FontAwesome (مثال: fa-hotel)</label><input type="text" id="srv-icon" value="${s.icon}" required></div>
-            <div class="form-group"><label>رابط الصورة</label><input type="text" id="srv-img" value="${s.image}" required></div>
-            <div class="form-submit-container"><button type="submit" class="btn btn-primary">حفظ</button></div>
-        </form>
-    `;
-    document.getElementById("generic-item-modal").style.display = "flex";
-}
-
-function saveServiceSubmit(event, id) {
-    event.preventDefault();
-    const data = getAppData();
-    const item = {
-        id: id || `serv-${Date.now()}`,
-        title: document.getElementById("srv-title").value,
-        description: document.getElementById("srv-desc").value,
-        icon: document.getElementById("srv-icon").value,
-        image: document.getElementById("srv-img").value,
-        hidden: false
-    };
-    if (id) {
-        const idx = data.services.findIndex(x => x.id === id);
-        if (idx !== -1) data.services[idx] = item;
-    } else {
-        data.services.push(item);
-    }
-    saveAppData(data);
-    closeGenericModal();
-    renderAdminServices();
-    renderAllFrontend();
-    showToast("تم الحفظ بنجاح", "success");
-}
-
-function toggleServiceHide(id) {
-    const data = getAppData();
-    const s = data.services.find(x => x.id === id);
-    if (s) { s.hidden = !s.hidden; saveAppData(data); renderAdminServices(); renderAllFrontend(); showToast("تم التحديث", "success"); }
-}
-
-function deleteService(id) {
-    if (!confirm("هل أنت متأكد من الحذف؟")) return;
-    const data = getAppData();
-    data.services = data.services.filter(x => x.id !== id);
-    saveAppData(data);
-    renderAdminServices();
-    renderAllFrontend();
-    showToast("تم الحذف", "success");
-}
-
-/* Admin CRUD: Airlines */
-function renderAdminAirlines() {
-    const data = getAppData();
-    const list = document.getElementById("admin-airlines-list");
-    if (!list) return;
-    list.innerHTML = data.airlines.map(a => `
-        <div class="admin-list-row">
-            <img src="${a.logo}" alt="">
-            <div class="admin-list-info">
-                <h4>${a.name}</h4>
-                <p>الحالة: ${a.hidden ? 'مخفي' : 'ظاهر'}</p>
-            </div>
-            <div class="admin-list-actions">
-                <button class="btn btn-secondary btn-sm" onclick="openAirlineModal('${a.id}')">تعديل</button>
-                <button class="btn btn-secondary btn-sm" onclick="toggleAirlineHide('${a.id}')">${a.hidden ? 'إظهار' : 'إخفاء'}</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteAirline('${a.id}')">حذف</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function openAirlineModal(id = null) {
-    const data = getAppData();
-    let a = { name: '', logo: '', hidden: false };
-    if (id) a = data.airlines.find(x => x.id === id) || a;
-    document.getElementById("generic-modal-title").innerText = id ? "تعديل شركة الطيران" : "إضافة شركة طيران";
-    document.getElementById("generic-modal-body").innerHTML = `
-        <form onsubmit="saveAirlineSubmit(event, '${id || ''}')">
-            <div class="form-group"><label>اسم الشركة</label><input type="text" id="air-name" value="${a.name}" required></div>
-            <div class="form-group"><label>رابط الشعار (Logo)</label><input type="text" id="air-logo" value="${a.logo}" required></div>
-            <div class="form-submit-container"><button type="submit" class="btn btn-primary">حفظ</button></div>
-        </form>
-    `;
-    document.getElementById("generic-item-modal").style.display = "flex";
-}
-
-function saveAirlineSubmit(event, id) {
-    event.preventDefault();
-    const data = getAppData();
-    const item = {
-        id: id || `air-${Date.now()}`,
-        name: document.getElementById("air-name").value,
-        logo: document.getElementById("air-logo").value,
-        hidden: false
-    };
-    if (id) {
-        const idx = data.airlines.findIndex(x => x.id === id);
-        if (idx !== -1) data.airlines[idx] = item;
-    } else {
-        data.airlines.push(item);
-    }
-    saveAppData(data);
-    closeGenericModal();
-    renderAdminAirlines();
-    renderAllFrontend();
-    showToast("تم الحفظ بنجاح", "success");
-}
-
-function toggleAirlineHide(id) {
-    const data = getAppData();
-    const a = data.airlines.find(x => x.id === id);
-    if (a) { a.hidden = !a.hidden; saveAppData(data); renderAdminAirlines(); renderAllFrontend(); showToast("تم التحديث", "success"); }
-}
-
-function deleteAirline(id) {
-    if (!confirm("هل أنت متأكد من الحذف؟")) return;
-    const data = getAppData();
-    data.airlines = data.airlines.filter(x => x.id !== id);
-    saveAppData(data);
-    renderAdminAirlines();
-    renderAllFrontend();
-    showToast("تم الحذف", "success");
-}
-
-/* Admin CRUD: Airports */
-function renderAdminAirports() {
-    const data = getAppData();
-    const list = document.getElementById("admin-airports-list");
-    if (!list) return;
-    list.innerHTML = data.airports.map(apt => `
-        <div class="admin-list-row">
-            <div class="admin-list-info">
-                <h4>${apt.code} - ${apt.name}</h4>
-            </div>
-            <div class="admin-list-actions">
-                <button class="btn btn-secondary btn-sm" onclick="openAirportModal('${apt.id}')">تعديل</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteAirport('${apt.id}')">حذف</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function openAirportModal(id = null) {
-    const data = getAppData();
-    let apt = { code: '', name: '' };
-    if (id) apt = data.airports.find(x => x.id === id) || apt;
-    document.getElementById("generic-modal-title").innerText = id ? "تعديل المطار" : "إضافة مطار جديد";
-    document.getElementById("generic-modal-body").innerHTML = `
-        <form onsubmit="saveAirportSubmit(event, '${id || ''}')">
-            <div class="form-group"><label>رمز المطار (مثال: ALG)</label><input type="text" id="apt-code" value="${apt.code}" required></div>
-            <div class="form-group"><label>اسم المطار الكامل</label><input type="text" id="apt-name" value="${apt.name}" required></div>
-            <div class="form-submit-container"><button type="submit" class="btn btn-primary">حفظ</button></div>
-        </form>
-    `;
-    document.getElementById("generic-item-modal").style.display = "flex";
-}
-
-function saveAirportSubmit(event, id) {
-    event.preventDefault();
-    const data = getAppData();
-    const item = {
-        id: id || `apt-${Date.now()}`,
-        code: document.getElementById("apt-code").value,
-        name: document.getElementById("apt-name").value
-    };
-    if (id) {
-        const idx = data.airports.findIndex(x => x.id === id);
-        if (idx !== -1) data.airports[idx] = item;
-    } else {
-        data.airports.push(item);
-    }
-    saveAppData(data);
-    closeGenericModal();
-    renderAdminAirports();
-    showToast("تم الحفظ بنجاح", "success");
-}
-
-function deleteAirport(id) {
-    if (!confirm("هل أنت متأكد من الحذف؟")) return;
-    const data = getAppData();
-    data.airports = data.airports.filter(x => x.id !== id);
-    saveAppData(data);
-    renderAdminAirports();
-    showToast("تم الحذف", "success");
-}
-
-/* Admin CRUD: YouTube */
-function renderAdminYoutube() {
-    const data = getAppData();
-    const list = document.getElementById("admin-youtube-list");
-    if (!list) return;
-    list.innerHTML = data.youtube.map(y => `
-        <div class="admin-list-row">
-            <div class="admin-list-info">
-                <h4>${y.title}</h4>
-                <p>${y.description} | الحالة: ${y.hidden ? 'مخفي' : 'ظاهر'}</p>
-            </div>
-            <div class="admin-list-actions">
-                <button class="btn btn-secondary btn-sm" onclick="openYoutubeModal('${y.id}')">تعديل</button>
-                <button class="btn btn-secondary btn-sm" onclick="toggleYoutubeHide('${y.id}')">${y.hidden ? 'إظهار' : 'إخفاء'}</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteYoutube('${y.id}')">حذف</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function openYoutubeModal(id = null) {
-    const data = getAppData();
-    let y = { title: '', description: '', url: '', hidden: false };
-    if (id) y = data.youtube.find(x => x.id === id) || y;
-    document.getElementById("generic-modal-title").innerText = id ? "تعديل الفيديو" : "إضافة فيديو جديد";
-    document.getElementById("generic-modal-body").innerHTML = `
-        <form onsubmit="saveYoutubeSubmit(event, '${id || ''}')">
-            <div class="form-group"><label>عنوان الفيديو</label><input type="text" id="yt-title" value="${y.title}" required></div>
-            <div class="form-group"><label>الوصف</label><textarea id="yt-desc" rows="2" required>${y.description}</textarea></div>
-            <div class="form-group"><label>رابط التضمين Embed URL</label><input type="text" id="yt-url" value="${y.url}" required></div>
-            <div class="form-submit-container"><button type="submit" class="btn btn-primary">حفظ</button></div>
-        </form>
-    `;
-    document.getElementById("generic-item-modal").style.display = "flex";
-}
-
-function saveYoutubeSubmit(event, id) {
-    event.preventDefault();
-    const data = getAppData();
-    const item = {
-        id: id || `yt-${Date.now()}`,
-        title: document.getElementById("yt-title").value,
-        description: document.getElementById("yt-desc").value,
-        url: document.getElementById("yt-url").value,
-        hidden: false
-    };
-    if (id) {
-        const idx = data.youtube.findIndex(x => x.id === id);
-        if (idx !== -1) data.youtube[idx] = item;
-    } else {
-        data.youtube.push(item);
-    }
-    saveAppData(data);
-    closeGenericModal();
-    renderAdminYoutube();
-    renderAllFrontend();
-    showToast("تم الحفظ بنجاح", "success");
-}
-
-function toggleYoutubeHide(id) {
-    const data = getAppData();
-    const y = data.youtube.find(x => x.id === id);
-    if (y) { y.hidden = !y.hidden; saveAppData(data); renderAdminYoutube(); renderAllFrontend(); showToast("تم التحديث", "success"); }
-}
-
-function deleteYoutube(id) {
-    if (!confirm("هل أنت متأكد من الحذف؟")) return;
-    const data = getAppData();
-    data.youtube = data.youtube.filter(x => x.id !== id);
-    saveAppData(data);
-    renderAdminYoutube();
-    renderAllFrontend();
-    showToast("تم الحذف", "success");
-}
-
-/* Admin CRUD: Gallery */
-function renderAdminGallery() {
-    const data = getAppData();
-    const list = document.getElementById("admin-gallery-list");
-    if (!list) return;
-    list.innerHTML = data.gallery.map(g => `
-        <div class="admin-list-row">
-            <img src="${g.url}" alt="">
-            <div class="admin-list-info">
-                <h4>${g.caption}</h4>
-                <p>الحالة: ${g.hidden ? 'مخفي' : 'ظاهر'}</p>
-            </div>
-            <div class="admin-list-actions">
-                <button class="btn btn-secondary btn-sm" onclick="openGalleryModal('${g.id}')">تعديل</button>
-                <button class="btn btn-secondary btn-sm" onclick="toggleGalleryHide('${g.id}')">${g.hidden ? 'إظهار' : 'إخفاء'}</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteGallery('${g.id}')">حذف</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function openGalleryModal(id = null) {
-    const data = getAppData();
-    let g = { caption: '', url: '', hidden: false };
-    if (id) g = data.gallery.find(x => x.id === id) || g;
-    document.getElementById("generic-modal-title").innerText = id ? "تعديل الصورة" : "إضافة صورة جديدة";
-    document.getElementById("generic-modal-body").innerHTML = `
-        <form onsubmit="saveGallerySubmit(event, '${id || ''}')">
-            <div class="form-group"><label>وصف الصورة (Caption)</label><input type="text" id="gal-cap" value="${g.caption}" required></div>
-            <div class="form-group"><label>رابط الصورة</label><input type="text" id="gal-url" value="${g.url}" required></div>
-            <div class="form-submit-container"><button type="submit" class="btn btn-primary">حفظ</button></div>
-        </form>
-    `;
-    document.getElementById("generic-item-modal").style.display = "flex";
-}
-
-function saveGallerySubmit(event, id) {
-    event.preventDefault();
-    const data = getAppData();
-    const item = {
-        id: id || `gal-${Date.now()}`,
-        caption: document.getElementById("gal-cap").value,
-        url: document.getElementById("gal-url").value,
-        hidden: false
-    };
-    if (id) {
-        const idx = data.gallery.findIndex(x => x.id === id);
-        if (idx !== -1) data.gallery[idx] = item;
-    } else {
-        data.gallery.push(item);
-    }
-    saveAppData(data);
-    closeGenericModal();
-    renderAdminGallery();
-    renderAllFrontend();
-    showToast("تم الحفظ بنجاح", "success");
-}
-
-function toggleGalleryHide(id) {
-    const data = getAppData();
-    const g = data.gallery.find(x => x.id === id);
-    if (g) { g.hidden = !g.hidden; saveAppData(data); renderAdminGallery(); renderAllFrontend(); showToast("تم التحديث", "success"); }
-}
-
-function deleteGallery(id) {
-    if (!confirm("هل أنت متأكد من الحذف؟")) return;
-    const data = getAppData();
-    data.gallery = data.gallery.filter(x => x.id !== id);
-    saveAppData(data);
-    renderAdminGallery();
-    renderAllFrontend();
-    showToast("تم الحذف", "success");
-}
-
-function closeGenericModal() {
-    document.getElementById("generic-item-modal").style.display = "none";
-}
-
-/* Admin Settings */
-function loadAdminSettings() {
-    const data = getAppData();
-    document.getElementById("set-company-ar").value = data.settings.companyAr;
-    document.getElementById("set-company-en").value = data.settings.companyEn;
-    document.getElementById("set-phone").value = data.settings.phone;
-    document.getElementById("set-email").value = data.settings.email;
-    document.getElementById("set-whatsapp").value = data.settings.whatsapp;
-    document.getElementById("set-address").value = data.settings.address;
-}
-
-function saveSettings(event) {
-    event.preventDefault();
-    const data = getAppData();
-    data.settings.companyAr = document.getElementById("set-company-ar").value;
-    data.settings.companyEn = document.getElementById("set-company-en").value;
-    data.settings.phone = document.getElementById("set-phone").value;
-    data.settings.email = document.getElementById("set-email").value;
-    data.settings.whatsapp = document.getElementById("set-whatsapp").value;
-    data.settings.address = document.getElementById("set-address").value;
-
-    const currP = document.getElementById("set-curr-pass").value;
-    const newP = document.getElementById("set-new-pass").value;
-    const confP = document.getElementById("set-confirm-pass").value;
-
-    if (newP || currP || confP) {
-        if (currP !== data.settings.adminPass) {
-            showToast("كلمة المرور الحالية غير صحيحة", "error");
-            return;
-        }
-        if (newP !== confP) {
-            showToast("كلمتا المرور الجديدتان غير متطابقتين", "error");
-            return;
-        }
-        data.settings.adminPass = newP;
-        data.settings.isDefaultPass = false;
-        showToast("تم تحديث كلمة المرور بنجاح", "success");
+    if (mobileBtn && mainNav && mobileOverlay) {
+        mobileBtn.addEventListener('click', () => {
+            mainNav.classList.toggle('active');
+            mobileOverlay.classList.toggle('active');
+        });
+        mobileOverlay.addEventListener('click', () => {
+            mainNav.classList.remove('active');
+            mobileOverlay.classList.remove('active');
+        });
     }
 
-    saveAppData(data);
-    renderAllFrontend();
-    showToast("تم حفظ الإعدادات بنجاح", "success");
-}
+    // Passenger dynamic adder
+    const addPassBtn = document.getElementById('addPassengerBtn');
+    const passContainer = document.getElementById('passengersContainer');
+    if (addPassBtn && passContainer) {
+        addPassBtn.addEventListener('click', () => {
+            let row = document.createElement('div');
+            row.className = 'passenger-row-card mt-2';
+            row.innerHTML = `
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label>اسم المسافر الكامل</label>
+                        <input type="text" class="form-control pass-name" placeholder="اسم المسافر">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم جواز السفر</label>
+                        <input type="text" class="form-control pass-passport" placeholder="رقم الجواز">
+                    </div>
+                    <div class="form-group">
+                        <label>الجنسية</label>
+                        <input type="text" class="form-control pass-nationality" placeholder="الجنسية">
+                    </div>
+                </div>
+            `;
+            passContainer.appendChild(row);
+        });
+    }
 
-function exportBackupFile() {
-    const data = getAppData();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'ofoq_travel_backup.json';
-    a.click();
-    showToast("تم تصدير النسخة الاحتياطية بنجاح", "success");
-}
+    // Booking Form Submission & WhatsApp Generation
+    const bookingForm = document.getElementById('bookingForm');
+    if (bookingForm) {
+        bookingForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            let tripType = document.getElementById('tripType').value;
+            let custName = document.getElementById('custName').value;
+            let custPhone = document.getElementById('custPhone').value;
+            let custEmail = document.getElementById('custEmail').value;
+            let airline = document.getElementById('flightAirline').value;
+            let flightNum = document.getElementById('flightNumber').value;
+            let flightClass = document.getElementById('flightClass').value;
+            let depAirport = document.getElementById('depAirport').value;
+            let arrAirport = document.getElementById('arrAirport').value;
+            let depDateTime = document.getElementById('depDateTime').value;
+            let notes = document.getElementById('bookingNotes').value;
 
-function importBackupFile(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const imported = JSON.parse(e.target.result);
-            if (imported && imported.settings) {
-                saveAppData(imported);
-                renderAllFrontend();
-                loadAdminSettings();
-                renderAdminDashboard();
-                showToast("تم استعادة النسخة الاحتياطية بنجاح", "success");
+            // Passengers collection
+            let passengers = [];
+            document.querySelectorAll('.passenger-row-card').forEach(card => {
+                let pName = card.querySelector('.pass-name').value;
+                let pPass = card.querySelector('.pass-passport').value;
+                let pNat = card.querySelector('.pass-nationality').value;
+                if(pName) {
+                    passengers.push({ name: pName, passport: pPass, nationality: pNat });
+                }
+            });
+
+            // Generate Booking Number
+            let bookings = getData('bookings');
+            let seq = bookings.length + 1;
+            let bookingNum = `OFQ-2026-${String(seq).padStart(4, '0')}`;
+
+            let newBooking = {
+                id: bookingNum,
+                tripType, custName, custPhone, custEmail,
+                airline, flightNum, flightClass, depAirport, arrAirport, depDateTime,
+                passengers, notes, status: 'جديد', date: new Date().toLocaleDateString()
+            };
+
+            bookings.push(newBooking);
+            saveData('bookings', bookings);
+            showToast(`تم حفظ طلب الحجز برقم ${bookingNum} بنجاح!`);
+
+            // WhatsApp Message Construction
+            let settings = getSettings();
+            let waNumber = settings.whatsapp.replace(/[^0-9]/g, '');
+            
+            let msg = `*طلب حجز جديد عبر موقع أفق للطيران*%0A`;
+            msg += `-----------------------------------%0A`;
+            msg += `*رقم الحجز:* ${bookingNum}%0A`;
+            msg += `*نوع الرحلة:* ${tripType}%0A`;
+            msg += `*اسم العميل:* ${custName}%0A`;
+            msg += `*الهاتف:* ${custPhone}%0A`;
+            msg += `*البريد:* ${custEmail || 'غير متوفر'}%0A`;
+            msg += `*شركة الطيران:* ${airline || 'غير محدد'}%0A`;
+            msg += `*رقم الرحلة:* ${flightNum || 'غير محدد'}%0A`;
+            msg += `*الدرجة:* ${flightClass || 'غير محدد'}%0A`;
+            msg += `*المغادرة:* ${depAirport}%0A`;
+            msg += `*الوصول:* ${arrAirport}%0A`;
+            msg += `*التاريخ والوقت:* ${depDateTime || 'غير محدد'}%0A`;
+            msg += `*عدد المسافرين:* ${passengers.length}%0A`;
+            if(notes) msg += `*الملاحظات:* ${notes}%0A`;
+            msg += `-----------------------------------%0A`;
+            msg += `يرجى تأكيد الحجز ومتابعة التفاصيل.`;
+
+            setTimeout(() => {
+                window.open(`https://wa.me/${waNumber}?text=${msg}`, '_blank');
+            }, 1000);
+        });
+    }
+
+    // Admin Login Modal Management
+    const loginModal = document.getElementById('loginModal');
+    const openLoginBtn = document.getElementById('openLoginModalBtn');
+    const closeLoginBtn = document.getElementById('closeLoginModalBtn');
+    const adminLoginForm = document.getElementById('adminLoginForm');
+    const adminDashboardView = document.getElementById('adminDashboardView');
+    const backToSiteBtn = document.getElementById('backToSiteBtn');
+    const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+
+    if (openLoginBtn && loginModal) {
+        openLoginBtn.addEventListener('click', () => {
+            loginModal.classList.add('active');
+        });
+    }
+    if (closeLoginBtn && loginModal) {
+        closeLoginBtn.addEventListener('click', () => {
+            loginModal.classList.remove('active');
+        });
+    }
+
+    if (adminLoginForm) {
+        adminLoginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let passInput = document.getElementById('adminPasswordInput').value;
+            let settings = getSettings();
+            if (passInput === settings.adminPass) {
+                loginModal.classList.remove('active');
+                adminDashboardView.style.display = 'grid';
+                loadAdminTab('dash-home');
+                showToast('تم تسجيل الدخول بنجاح إلى لوحة التحكم');
             } else {
-                showToast("ملف النسخة الاحتياطية غير صالح", "error");
+                showToast('كلمة المرور غير صحيحة!');
             }
-        } catch (err) {
-            console.error(err);
-            showToast("خطأ في قراءة ملف JSON", "error");
-        }
-    };
-    reader.readAsText(file);
+        });
+    }
+
+    if (backToSiteBtn && adminDashboardView) {
+        backToSiteBtn.addEventListener('click', () => {
+            adminDashboardView.style.display = 'none';
+            renderFrontend();
+        });
+    }
+
+    if (adminLogoutBtn && adminDashboardView) {
+        adminLogoutBtn.addEventListener('click', () => {
+            adminDashboardView.style.display = 'none';
+            showToast('تم تسجيل الخروج بنجاح');
+            renderFrontend();
+        });
+    }
+
+    // Admin Sidebar Tabs Navigation
+    document.querySelectorAll('.admin-nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.admin-nav-link').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            let tab = link.getAttribute('data-tab');
+            loadAdminTab(tab);
+        });
+    });
+});
+
+// Admin CMS Tab Render Function
+function loadAdminTab(tabName) {
+    let body = document.getElementById('adminContentBody');
+    if (!body) return;
+
+    if (tabName === 'dash-home') {
+        let bookings = getData('bookings');
+        let offers = getData('offers');
+        let services = getData('services');
+        body.innerHTML = `
+            <div class="stats-grid-4">
+                <div class="stat-card-box">
+                    <div class="stat-card-icon"><i class="fa-solid fa-ticket"></i></div>
+                    <div class="stat-card-info">
+                        <h4>إجمالي الحجوزات</h4>
+                        <h2>${bookings.length}</h2>
+                    </div>
+                </div>
+                <div class="stat-card-box">
+                    <div class="stat-card-icon"><i class="fa-solid fa-gift"></i></div>
+                    <div class="stat-card-info">
+                        <h4>العروض النشطة</h4>
+                        <h2>${offers.length}</h2>
+                    </div>
+                </div>
+                <div class="stat-card-box">
+                    <div class="stat-card-icon"><i class="fa-solid fa-concierge-bell"></i></div>
+                    <div class="stat-card-info">
+                        <h4>الخدمات</h4>
+                        <h2>${services.length}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="card-item p-4">
+                <h3 class="mb-2">مرحباً بك في لوحة تحكم أفق للطيران</h3>
+                <p>يمكنك من هنا إدارة كافة محتويات الموقع، العروض، الخدمات، شركات الطيران، ومتابعة حجوزات العملاء بكل سهولة.</p>
+            </div>
+        `;
+    } 
+    else if (tabName === 'dash-bookings') {
+        let bookings = getData('bookings');
+        body.innerHTML = `
+            <div class="d-flex justify-between align-center mb-3">
+                <h3>إدارة حجوزات العملاء</h3>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>رقم الحجز</th>
+                        <th>العميل</th>
+                        <th>الهاتف</th>
+                        <th>المسار</th>
+                        <th>التاريخ</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${bookings.length === 0 ? `<tr><td colspan="6" class="text-center">لا توجد حجوزات حالياً</td></tr>` : 
+                    bookings.map((b, idx) => `
+                        <tr>
+                            <td><b>${b.id}</b></td>
+                            <td>${b.custName}</td>
+                            <td>${b.custPhone}</td>
+                            <td>${b.depAirport} ➔ ${b.arrAirport}</td>
+                            <td>${b.date}</td>
+                            <td>
+                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deleteBooking(${idx})"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    else if (tabName === 'dash-offers') {
+        let offers = getData('offers');
+        body.innerHTML = `
+            <div class="d-flex justify-between align-center mb-3">
+                <h3>إدارة العروض السياحية</h3>
+                <button class="btn btn-primary" onclick="openAddOfferModal()"><i class="fa-solid fa-plus"></i> إضافة عرض جديد</button>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>الصورة</th>
+                        <th>العنوان</th>
+                        <th>الوجهة</th>
+                        <th>الوصف</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${offers.map((o, idx) => `
+                        <tr>
+                            <td><img src="${o.image}" width="50" height="40" style="object-fit:cover; border-radius:4px;"></td>
+                            <td><b>${o.title}</b></td>
+                            <td>${o.destination}</td>
+                            <td>${o.desc}</td>
+                            <td>
+                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deleteItem('offers', ${idx})"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    else if (tabName === 'dash-services') {
+        let services = getData('services');
+        body.innerHTML = `
+            <div class="d-flex justify-between align-center mb-3">
+                <h3>إدارة الخدمات</h3>
+                <button class="btn btn-primary" onclick="openAddServiceModal()"><i class="fa-solid fa-plus"></i> إضافة خدمة</button>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>الأيقونة</th>
+                        <th>العنوان</th>
+                        <th>الوصف</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${services.map((s, idx) => `
+                        <tr>
+                            <td><i class="fa-solid ${s.icon}" style="font-size:1.5rem; color:var(--accent)"></i></td>
+                            <td><b>${s.title}</b></td>
+                            <td>${s.desc}</td>
+                            <td>
+                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deleteItem('services', ${idx})"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    else if (tabName === 'dash-airlines') {
+        let airlines = getData('airlines');
+        body.innerHTML = `
+            <div class="d-flex justify-between align-center mb-3">
+                <h3>شركات الطيران</h3>
+                <button class="btn btn-primary" onclick="openAddAirlineModal()"><i class="fa-solid fa-plus"></i> إضافة شركة طيران</button>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>الشعار</th>
+                        <th>الاسم</th>
+                        <th>IATA / ICAO</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${airlines.map((al, idx) => `
+                        <tr>
+                            <td><img src="${al.logo}" width="40" height="40" style="object-fit:contain;"></td>
+                            <td><b>${al.name}</b></td>
+                            <td>${al.iata} / ${al.icao}</td>
+                            <td>
+                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deleteItem('airlines', ${idx})"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    else if (tabName === 'dash-airports') {
+        let airports = getData('airports');
+        body.innerHTML = `
+            <div class="d-flex justify-between align-center mb-3">
+                <h3>المطارات</h3>
+                <button class="btn btn-primary" onclick="openAddAirportModal()"><i class="fa-solid fa-plus"></i> إضافة مطار</button>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>اسم المطار</th>
+                        <th>الرمز (Code)</th>
+                        <th>المدينة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${airports.map((ap, idx) => `
+                        <tr>
+                            <td><b>${ap.name}</b></td>
+                            <td>${ap.code}</td>
+                            <td>${ap.city}</td>
+                            <td>
+                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deleteItem('airports', ${idx})"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    else if (tabName === 'dash-destinations') {
+        let dests = getData('destinations');
+        body.innerHTML = `
+            <div class="d-flex justify-between align-center mb-3">
+                <h3>الوجهات السياحية</h3>
+                <button class="btn btn-primary" onclick="openAddDestModal()"><i class="fa-solid fa-plus"></i> إضافة وجهة</button>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>الصورة</th>
+                        <th>المدينة</th>
+                        <th>الدولة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${dests.map((d, idx) => `
+                        <tr>
+                            <td><img src="${d.image}" width="50" height="40" style="object-fit:cover; border-radius:4px;"></td>
+                            <td><b>${d.name}</b></td>
+                            <td>${d.country}</td>
+                            <td>
+                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deleteItem('destinations', ${idx})"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    else if (tabName === 'dash-youtube') {
+        let yts = getData('youtube');
+        body.innerHTML = `
+            <div class="d-flex justify-between align-center mb-3">
+                <h3>فيديوهات اليوتيوب</h3>
+                <button class="btn btn-primary" onclick="openAddYoutubeModal()"><i class="fa-solid fa-plus"></i> إضافة فيديو</button>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>العنوان</th>
+                        <th>الوصف</th>
+                        <th>الرابط</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${yts.map((y, idx) => `
+                        <tr>
+                            <td><b>${y.title}</b></td>
+                            <td>${y.desc}</td>
+                            <td>${y.url}</td>
+                            <td>
+                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deleteItem('youtube', ${idx})"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    else if (tabName === 'dash-gallery') {
+        let gals = getData('gallery');
+        body.innerHTML = `
+            <div class="d-flex justify-between align-center mb-3">
+                <h3>معرض الصور</h3>
+                <button class="btn btn-primary" onclick="openAddGalleryModal()"><i class="fa-solid fa-plus"></i> إضافة صورة</button>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>الصورة</th>
+                        <th>العنوان</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${gals.map((g, idx) => `
+                        <tr>
+                            <td><img src="${g.image}" width="60" height="40" style="object-fit:cover; border-radius:4px;"></td>
+                            <td><b>${g.title}</b></td>
+                            <td>
+                                <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deleteItem('gallery', ${idx})"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    else if (tabName === 'dash-settings') {
+        let s = getSettings();
+        body.innerHTML = `
+            <div class="card-item p-4">
+                <h3 class="mb-3">إعدادات الموقع العامة</h3>
+                <form id="settingsForm">
+                    <div class="form-grid-3">
+                        <div class="form-group">
+                            <label>اسم الشركة (عربي)</label>
+                            <input type="text" id="stCompanyName" class="form-control" value="${s.companyName}">
+                        </div>
+                        <div class="form-group">
+                            <label>اسم الشركة (إنجليزي)</label>
+                            <input type="text" id="stCompanySub" class="form-control" value="${s.companySub}">
+                        </div>
+                        <div class="form-group">
+                            <label>رقم الهاتف</label>
+                            <input type="text" id="stPhone" class="form-control" value="${s.phone}">
+                        </div>
+                        <div class="form-group">
+                            <label>رقم الواتساب</label>
+                            <input type="text" id="stWhatsapp" class="form-control" value="${s.whatsapp}">
+                        </div>
+                        <div class="form-group">
+                            <label>البريد الإلكتروني</label>
+                            <input type="text" id="stEmail" class="form-control" value="${s.email}">
+                        </div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label>عنوان Hero الرئيسي</label>
+                        <input type="text" id="stHeroTitle" class="form-control" value="${s.heroTitle}">
+                    </div>
+                    <div class="form-group mt-3">
+                        <label>وصف Hero</label>
+                        <textarea id="stHeroDesc" class="form-control" rows="2">${s.heroDesc}</textarea>
+                    </div>
+                    <div class="form-submit-box mt-4">
+                        <button type="button" class="btn btn-primary" onclick="saveGeneralSettings()">حفظ الإعدادات</button>
+                    </div>
+                </form>
+            </div>
+        `;
+    }
+    else if (tabName === 'dash-security') {
+        body.innerHTML = `
+            <div class="card-item p-4" style="max-width:500px;">
+                <h3 class="mb-3">تغيير كلمة مرور لوحة التحكم</h3>
+                <form id="securityForm">
+                    <div class="form-group">
+                        <label>كلمة المرور الحالية</label>
+                        <input type="password" id="currPass" class="form-control" required>
+                    </div>
+                    <div class="form-group mt-2">
+                        <label>كلمة المرور الجديدة</label>
+                        <input type="password" id="newPass" class="form-control" required>
+                    </div>
+                    <div class="form-submit-box mt-3">
+                        <button type="button" class="btn btn-primary" onclick="updateAdminPassword()">تغيير كلمة المرور</button>
+                    </div>
+                </form>
+            </div>
+        `;
+    }
+    else if (tabName === 'dash-backup') {
+        body.innerHTML = `
+            <div class="card-item p-4">
+                <h3 class="mb-3">النسخ الاحتياطي واستعادة البيانات</h3>
+                <p class="mb-3">يمكنك تصدير نسخة احتياطية كاملة لبيانات الموقع أو استعادتها عند الحاجة.</p>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-primary" onclick="exportBackup()"><i class="fa-solid fa-download"></i> تصدير النسخة الاحتياطية (JSON)</button>
+                    <button class="btn btn-danger" onclick="resetWebsite()"><i class="fa-solid fa-rotate-right"></i> استعادة إعدادات المصنع</button>
+                </div>
+            </div>
+        `;
+    }
 }
 
-function resetWebsiteData() {
-    if (!confirm("تحذير: سيتم إعادة ضبط كافة بيانات الموقع والإعدادات والحجوزات إلى القيم الافتراضية. هل أنت متأكد؟")) return;
-    localStorage.removeItem("ofoq_data");
-    localStorage.removeItem("ofoq_initialized");
-    initDatabase();
-    renderAllFrontend();
-    loadAdminSettings();
-    renderAdminDashboard();
-    showToast("تم إعادة ضبط المصنع بنجاح", "success");
+// Admin CMS CRUD Operations
+function deleteItem(key, index) {
+    let list = getData(key);
+    list.splice(index, 1);
+    saveData(key, list);
+    showToast('تم الحذف بنجاح');
+    let activeTab = document.querySelector('.admin-nav-link.active').getAttribute('data-tab');
+    loadAdminTab(activeTab);
+}
+
+function deleteBooking(index) {
+    let list = getData('bookings');
+    list.splice(index, 1);
+    saveData('bookings', list);
+    showToast('تم حذف الحجز بنجاح');
+    loadAdminTab('dash-bookings');
+}
+
+function saveGeneralSettings() {
+    let s = getSettings();
+    s.companyName = document.getElementById('stCompanyName').value;
+    s.companySub = document.getElementById('stCompanySub').value;
+    s.phone = document.getElementById('stPhone').value;
+    s.whatsapp = document.getElementById('stWhatsapp').value;
+    s.email = document.getElementById('stEmail').value;
+    s.heroTitle = document.getElementById('stHeroTitle').value;
+    s.heroDesc = document.getElementById('stHeroDesc').value;
+    saveSettings(s);
+    showToast('تم حفظ الإعدادات بنجاح!');
+}
+
+function updateAdminPassword() {
+    let curr = document.getElementById('currPass').value;
+    let neu = document.getElementById('newPass').value;
+    let s = getSettings();
+    if(curr === s.adminPass) {
+        s.adminPass = neu;
+        saveSettings(s);
+        showToast('تم تغيير كلمة المرور بنجاح!');
+        document.getElementById('securityForm').reset();
+    } else {
+        showToast('كلمة المرور الحالية غير صحيحة!');
+    }
+}
+
+function exportBackup() {
+    let backupObj = {
+        settings: getSettings(),
+        services: getData('services'),
+        offers: getData('offers'),
+        airlines: getData('airlines'),
+        airports: getData('airports'),
+        destinations: getData('destinations'),
+        youtube: getData('youtube'),
+        gallery: getData('gallery'),
+        why: getData('why'),
+        bookings: getData('bookings')
+    };
+    let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
+    let downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", "ofoq_travel_backup.json");
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    showToast('تم تصدير النسخة الاحتياطية بنجاح!');
+}
+
+function resetWebsite() {
+    if(confirm('تحذير: سيتم استعادة الإعدادات الافتراضية وحذف التعديلات والبيانات الحالية. هل أنت متأكد؟')) {
+        localStorage.clear();
+        initLocalStorage();
+        showToast('تمت استعادة إعدادات المصنع بنجاح!');
+        location.reload();
+    }
+}
+
+// Quick Add Prompts for Admin CMS
+function openAddOfferModal() {
+    let title = prompt("عنوان العرض:");
+    if(!title) return;
+    let destination = prompt("الوجهة (مثال: دبي):");
+    let desc = prompt("وصف العرض:");
+    let image = prompt("رابط الصورة:", "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&q=80");
+    let offers = getData('offers');
+    offers.push({ id: 'o_' + Date.now(), title, destination: destination || "تواصل معنا للتفاصيل", desc: desc || "تواصل معنا للتفاصيل", image: image || "" });
+    saveData('offers', offers);
+    showToast('تمت إضافة العرض بنجاح');
+    loadAdminTab('dash-offers');
+}
+
+function openAddServiceModal() {
+    let title = prompt("عنوان الخدمة:");
+    if(!title) return;
+    let desc = prompt("وصف الخدمة:");
+    let icon = prompt("أيقونة FontAwesome (مثال: fa-plane):", "fa-plane");
+    let services = getData('services');
+    services.push({ id: 's_' + Date.now(), title, desc, icon });
+    saveData('services', services);
+    showToast('تمت إضافة الخدمة بنجاح');
+    loadAdminTab('dash-services');
+}
+
+function openAddAirlineModal() {
+    let name = prompt("اسم شركة الطيران:");
+    if(!name) return;
+    let iata = prompt("رمز IATA:");
+    let icao = prompt("رمز ICAO:");
+    let logo = prompt("رابط الشعار (Logo URL):", "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=150&q=80");
+    let airlines = getData('airlines');
+    airlines.push({ id: 'al_' + Date.now(), name, iata, icao, logo });
+    saveData('airlines', airlines);
+    showToast('تمت إضافة شركة الطيران بنجاح');
+    loadAdminTab('dash-airlines');
+}
+
+function openAddAirportModal() {
+    let name = prompt("اسم المطار:");
+    if(!name) return;
+    let code = prompt("رمز المطار (مثل ALG):");
+    let city = prompt("المدينة:");
+    let airports = getData('airports');
+    airports.push({ id: 'ap_' + Date.now(), name, code, city });
+    saveData('airports', airports);
+    showToast('تمت إضافة المطار بنجاح');
+    loadAdminTab('dash-airports');
+}
+
+function openAddDestModal() {
+    let name = prompt("اسم المدينة:");
+    if(!name) return;
+    let country = prompt("الدولة:");
+    let image = prompt("رابط الصورة:", "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=600&q=80");
+    let dests = getData('destinations');
+    dests.push({ id: 'd_' + Date.now(), name, country, image });
+    saveData('destinations', dests);
+    showToast('تمت إضافة الوجهة بنجاح');
+    loadAdminTab('dash-destinations');
+}
+
+function openAddYoutubeModal() {
+    let title = prompt("عنوان الفيديو:");
+    if(!title) return;
+    let desc = prompt("وصف الفيديو:");
+    let url = prompt("رابط Embed يوتيوب:", "https://www.youtube.com/embed/dQw4w9WgXcQ");
+    let yts = getData('youtube');
+    yts.push({ id: 'y_' + Date.now(), title, desc, url });
+    saveData('youtube', yts);
+    showToast('تمت إضافة الفيديو بنجاح');
+    loadAdminTab('dash-youtube');
+}
+
+function openAddGalleryModal() {
+    let title = prompt("عنوان أو وصف الصورة:");
+    if(!title) return;
+    let image = prompt("رابط الصورة:", "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=600&q=80");
+    let gals = getData('gallery');
+    gals.push({ id: 'g_' + Date.now(), title, image });
+    saveData('gallery', gals);
+    showToast('تمت إضافة الصورة بنجاح');
+    loadAdminTab('dash-gallery');
 }
