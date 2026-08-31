@@ -20,7 +20,7 @@ const DEFAULT_DATA = {
             destination: "إسطنبول، تركيا",
             description: "شمل التذاكر ذهاب وعودة مع الإقامة الفندقية لمدة 5 أيام ووجبة الإفطار.",
             price: "اتصل بنا للتفاصيل",
-            currency: "USD",
+            currency: "",
             image: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=600&q=80",
             hidden: false
         },
@@ -30,7 +30,7 @@ const DEFAULT_DATA = {
             destination: "دبي، الإمارات",
             description: "استمتع بأجمل المعالم السياحية مع تذاكر الطيران المباشر والإقامة لـ 4 ليالٍ.",
             price: "أتصل بنا للتفاصيل",
-            currency: "USD",
+            currency: "",
             image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&q=80",
             hidden: false
         },
@@ -40,7 +40,7 @@ const DEFAULT_DATA = {
             destination: "باريس، فرنسا",
             description: "رحلة مباشرة مع أرقى الخطوط الجوية وتذاكر زيارة الأماكن السياحية الشهيرة.",
             price: "أتصل بنا للتفاصيل",
-            currency: "USD",
+            currency: "",
             image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80",
             hidden: false
         }
