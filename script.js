@@ -66,7 +66,7 @@ const DEFAULT_DATA = {
         { id: 4, name: "لندن", description: "عاصمة المال والأعمال", image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=800&q=80", hidden: false }
     ],
     youtube: [
-        { id: 1, title: "جولة في أفق للطيران", description: "تعرف على خدماتنا الفاخرة لعملائنا الكرام", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", hidden: false }
+        { id: 1, title: "جولة في أفق للطيران", description: "تعرف على خدماتنا الفاخرة لعملائنا الكرام", url: "https://www.youtube.com/embed/vLHD66WehlE?si=LB1kTZKW5c5vf65w", hidden: false }
     ],
     gallery: [
         { id: 1, caption: "طائراتنا الفاخرة", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&q=80", hidden: false },
@@ -387,10 +387,6 @@ function addFlightCard() {
                 <input type="text" class="f-airline" placeholder="مثال: القطرية...">
             </div>
             <div class="form-group">
-                <label>رقم الرحلة</label>
-                <input type="text" class="f-number" placeholder="مثال: QR-102...">
-            </div>
-            <div class="form-group">
                 <label>مطار المغادرة</label>
                 <input type="text" class="f-dep" placeholder="مطار المغادرة..." required>
             </div>
@@ -404,32 +400,22 @@ function addFlightCard() {
                 <label>تاريخ المغادرة</label>
                 <input type="date" class="f-dep-date" required>
             </div>
-            <div class="form-group">
-                <label>وقت المغادرة</label>
-                <input type="time" class="f-dep-time">
-            </div>
+
             <div class="form-group">
                 <label>تاريخ العودة</label>
                 <input type="date" class="f-arr-date" required>
             </div>
-            <div class="form-group">
-                <label>وقت العودة</label>
-                <input type="time" class="f-arr-time">
-            </div>
-        </div>
+               </div>
         <div class="form-row">
-            <div class="form-group">
-                <label>البوابة / Terminal</label>
-                <input type="text" class="f-term" placeholder="Terminal...">
-            </div>
-            <div class="form-group">
-                <label>الدرجة / Class</label>
-                <input type="text" class="f-class" placeholder="Economy / Business...">
-            </div>
-            <div class="form-group">
-                <label>المقعد / Seat</label>
-                <input type="text" class="f-seat" placeholder="مثال: 12A...">
-            </div>
+<div class="form-group">
+    <label>الدرجة / Class</label>
+    <select class="f-class">
+        <option value="" disabled selected>اختر الدرجة</option>
+        <option value="economy">السياحية (Economy)</option>
+        <option value="business">الأعمال (Business)</option>
+        <option value="first">الأولى (First Class)</option>
+    </select>
+</div>
             <div class="form-group">
                 <label>الأمتعة المشحونة / المقصورة</label>
                 <input type="text" class="f-bag" placeholder="مثال: 23kg + 7kg...">
@@ -479,16 +465,11 @@ function handleBookingSubmit(e) {
         flights.push({
             index: idx + 1,
             airline: card.querySelector('.f-airline').value,
-            number: card.querySelector('.f-number').value,
             dep: card.querySelector('.f-dep').value,
             arr: card.querySelector('.f-arr').value,
             depDate: card.querySelector('.f-dep-date').value,
-            depTime: card.querySelector('.f-dep-time').value,
             arrDate: card.querySelector('.f-arr-date').value,
-            arrTime: card.querySelector('.f-arr-time').value,
-            term: card.querySelector('.f-term').value,
             flightClass: card.querySelector('.f-class').value,
-            seat: card.querySelector('.f-seat').value,
             baggage: card.querySelector('.f-bag').value
         });
     });
@@ -511,7 +492,7 @@ function handleBookingSubmit(e) {
     saveData(data);
     showToast(`تم حفظ الحجز بنجاح برقم: ${bookingNumber}`, "success");
 
-    // Generate WhatsApp Message
+// Generate WhatsApp Message
     let waMessage = `✈️ طلب حجز جديد – أفق للطيران\n`;
     waMessage += `━━━━━━━━━━━━━━\n`;
     waMessage += `📋 معلومات الحجز\n`;
@@ -543,16 +524,12 @@ function handleBookingSubmit(e) {
     waMessage += `━━━━━━━━━━━━━━\n`;
 
     flights.forEach(f => {
-        waMessage += `✈️ الرحلة ${f.index}\n`;
         waMessage += `شركة الطيران: ${f.airline}\n`;
-        waMessage += `رقم الرحلة: ${f.number}\n`;
         waMessage += `المغادرة: ${f.dep}\n`;
         waMessage += `الوصول: ${f.arr}\n`;
-        waMessage += `تاريخ المغادرة: ${f.depDate} | الوقت: ${f.depTime}\n`;
-        waMessage += `تاريخ العودة: ${f.arrDate} | الوقت: ${f.arrTime}\n`;
-        if (f.term) waMessage += `Terminal: ${f.term}\n`;
+        waMessage += `تاريخ المغادرة: ${f.depDate}\n`;
+        waMessage += `تاريخ العودة: ${f.arrDate}\n`;
         if (f.flightClass) waMessage += `Class: ${f.flightClass}\n`;
-        if (f.seat) waMessage += `Seat: ${f.seat}\n`;
         if (f.baggage) waMessage += `الأمتعة: ${f.baggage}\n`;
         waMessage += `----\n`;
     });
@@ -566,7 +543,6 @@ function handleBookingSubmit(e) {
     const encodedMessage = encodeURIComponent(waMessage);
     const whatsappUrl = `https://wa.me/${data.settings.whatsapp.replace('+', '')}?text=${encodedMessage}`;
     
-    // تم التعديل هنا لاستخدام الانتقال المباشر بدون تأخير زمني ليتوافق مع قيود الهواتف المحمولة
     window.location.href = whatsappUrl;
 }
 
