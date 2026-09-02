@@ -39,10 +39,8 @@ const DEFAULT_AIRPORTS = [
 ];
 
 const DEFAULT_YOUTUBE = [
-    { id: "yt-1", title: "تجربة سفر متميزة مع أفق للطيران", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", desc: "جولة مصورة تظهر خدماتنا الفاخرة على متن الطائرة." },
-    { id: "yt-2", title: "أجمل الوجهات السياحية لعام 2026", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", desc: "استكشف أبرز الأماكن التي ننصح بزيارتها هذا العام." }
+    { id: "yt-1", title: "تجربة سفر متميزة مع أفق للطيران", url: "https://www.youtube.com/embed/Zw99saUMOu0?si=p0o6YlSqqZAflYB9", desc: "جولة مصورة تظهر خدماتنا الفاخرة على متن الطائرة." },
 ];
-
 const DEFAULT_GALLERY = [
     { id: "gal-1", title: "اسطنبول", img: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=600&q=80" },
     { id: "gal-2", title: "دبي", img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&q=80" },
