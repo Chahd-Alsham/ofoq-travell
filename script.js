@@ -65,8 +65,8 @@ const DEFAULT_DATA = {
         { id: 3, name: "إسطنبول", description: "ملتقى الحضارات", image: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=800&q=80", hidden: false },
         { id: 4, name: "لندن", description: "عاصمة المال والأعمال", image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=800&q=80", hidden: false }
     ],
-    youtube: [
-        { id: 1, title: "جولة في أفق للطيران", description: "تعرف على خدماتنا الفاخرة لعملائنا الكرام", url: "https://www.youtube.com/embed/vLHD66WehlE?si=LB1kTZKW5c5vf65w", hidden: false }
+youtube: [
+        { id: 1, title: "جولة في أفق للطيران", description: "تعرف على خدماتنا الفاخرة لعملائنا الكرام", url: "https://www.youtube.com/embed/e9nuDc7CEI0?si=zyiGUEmxkJWq6qSA", hidden: false }
     ],
     gallery: [
         { id: 1, caption: "طائراتنا الفاخرة", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&q=80", hidden: false },
